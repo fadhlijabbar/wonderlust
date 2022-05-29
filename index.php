@@ -1,3 +1,9 @@
+<?php
+
+include "config/connect.php";
+
+?>
+
 <!doctype html>
 <html>
 
@@ -125,13 +131,13 @@
         <div class="lg:w-800px py-20 lg:py-8 md:px-16 mx-auto lg:bg-tertiary lg:rounded-lg md:relative lg:-top-100px">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div class="text-center md:text-left px-6">
-                    <img src="assets/img/penginapan.svg" alt="" class="inline">
+                    <img src="src/assets/img/penginapan.svg" alt="" class="inline">
                     <div class="text-sm text-tertiary-text tracking-wider py-3">Penginapan</div>
                     <div class="text-sm text-quaternary tracking-wider"><b>100</b> beragam penginapan hadir di sini
                         untuk kamu.</div>
                 </div>
                 <div class="text-center md:text-left px-5">
-                    <img src=" assets/img/pengunjung.svg" alt="" class="inline">
+                    <img src="src/assets/img/pengunjung.svg" alt="" class="inline">
                     <div class=" text-sm text-tertiary-text tracking-wider py-3">Pengunjung
                     </div>
                     <div class="text-sm text-quaternary tracking-wider">Kami telah melayani <b>1000</b> pengunjung satu
@@ -139,7 +145,7 @@
                         terakhir.</div>
                 </div>
                 <div class="text-center md:text-left px-5">
-                    <img src=" assets/img/kota.svg" alt="" class="inline">
+                    <img src="src/assets/img/kota.svg" alt="" class="inline">
                     <div class=" text-sm text-tertiary-text tracking-wider py-3">Kota
                     </div>
                     <div class="text-sm text-quaternary tracking-wider">Saat ini kami telah hadir di <b>100</b> kota di
@@ -157,7 +163,7 @@
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
                 <div class="grid justify-items-center">
-                    <img src="assets/img/feature-illust1.png" alt="">
+                    <img src="src/assets/img/feature-illust1.png" alt="">
                 </div>
                 <div class="self-center">
                     <div class="heading font-playfair-display tracking-wide font-bold text-lg md:text-xl text-quaternary mb-5">
@@ -183,7 +189,7 @@
                     </div>
                 </div>
                 <div class="grid justify-items-center">
-                    <img src="assets/img/feature-illust2.png" alt="">
+                    <img src="src/assets/img/feature-illust2.png" alt="">
                 </div>
             </div>
         </div>
@@ -212,119 +218,49 @@
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-2 md:grid-cols-3 gap-10">
 
-                <div>
-                    <div class="mb-5">
-                        <img src="../data/thumb/1.jpeg" alt="" class="rounded-md">
+                <?php
+                $query = "SELECT * FROM hotel";
+                $result = mysqli_query($conn, $query);
+                while ($data = mysqli_fetch_array($result)) {
+                    $getPhoto = mysqli_query($conn, "SELECT * FROM foto WHERE id_hotel = '$data[id_hotel]'");
+                    $dataPhoto = mysqli_fetch_array($getPhoto);
+                ?>
+                    <div>
+                        <div class="mb-5">
+                            <img src="data/thumb/<?php echo $dataPhoto['nama_foto']; ?>" alt="" class="rounded-md">
+                        </div>
+                        <div class="font-bold text-quaternary tracking-wide text-sm md:text-base mb-1">
+                            <a href="hotel.php?id=<?php echo $data['id_hotel']; ?>">
+                                <?php echo $data['nama_hotel']; ?>
+                            </a>
+                        </div>
+                        <div class="text-quinary tracking-wider text-sm">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <?php
+                            $getProvince = mysqli_query($conn, "SELECT * FROM provinces WHERE id = '$data[provinsi]'");
+                            $dataProvince = mysqli_fetch_array($getProvince);
+                            $province = strtolower($dataProvince['name']);
+                            $provinceName = ucwords($province);
+                            $province = $dataProvince['name'];
+                            $getRegency = mysqli_query($conn, "SELECT * FROM regencies WHERE id = '$data[kota]'");
+                            $dataRegency = mysqli_fetch_array($getRegency);
+                            $regency = strtolower($dataRegency['name']);
+                            $regencyName = ucwords($regency);
+                            ?>
+                            <?php echo $regencyName; ?>, <?php echo $provinceName; ?>
+                        </div>
+                        <div class="font-bold tracking-wider text-sm text-secondary">
+                            <i class="fa-solid fa-money-bill"></i>
+                            <?php
+                            $getRoom = mysqli_query($conn, "SELECT * FROM kamar WHERE id_hotel = '$data[id_hotel]' ORDER BY harga ASC LIMIT 1");
+                            $dataRoom = mysqli_fetch_array($getRoom);
+                            ?>
+                            Rp<?php echo number_format($dataRoom['harga'], 2, '.', ','); ?>
+                        </div>
                     </div>
-                    <div class="font-bold text-quaternary tracking-wide text-sm md:text-base mb-1">
-                        <a href="">
-                            Hotel Seruni
-                        </a>
-                    </div>
-                    <div class="text-quinary tracking-wider text-sm">
-                        <i class="fa-solid fa-location-dot"></i>
-                        Bogor, Jawa Barat
-                    </div>
-                    <div class="font-bold tracking-wider text-sm text-secondary">
-                        <i class="fa-solid fa-money-bill"></i>
-                        Rp10,000,000
-                    </div>
-                </div>
-
-                <div>
-                    <div class="mb-5">
-                        <img src="../data/thumb/2.jpeg" alt="" class="rounded-md">
-                    </div>
-                    <div class="font-bold text-quaternary tracking-wide text-sm md:text-base mb-1">
-                        <a href="">
-                            Hotel Seruni
-                        </a>
-                    </div>
-                    <div class="text-quinary tracking-wider text-sm">
-                        <i class="fa-solid fa-location-dot"></i>
-                        Bogor, Jawa Barat
-                    </div>
-                    <div class="font-bold tracking-wider text-sm text-secondary">
-                        <i class="fa-solid fa-money-bill"></i>
-                        Rp10,000,000
-                    </div>
-                </div>
-
-                <div>
-                    <div class="mb-5">
-                        <img src="../data/thumb/3.jpg" alt="" class="rounded-md">
-                    </div>
-                    <div class="font-bold text-quaternary tracking-wide text-sm md:text-base mb-1">
-                        <a href="">
-                            Hotel Seruni
-                        </a>
-                    </div>
-                    <div class="text-quinary tracking-wider text-sm">
-                        <i class="fa-solid fa-location-dot"></i>
-                        Bogor, Jawa Barat
-                    </div>
-                    <div class="font-bold tracking-wider text-sm text-secondary">
-                        <i class="fa-solid fa-money-bill"></i>
-                        Rp10,000,000
-                    </div>
-                </div>
-
-                <div>
-                    <div class="mb-5">
-                        <img src="../data/thumb/4.jpeg" alt="" class="rounded-md">
-                    </div>
-                    <div class="font-bold text-quaternary tracking-wide text-sm md:text-base mb-1">
-                        <a href="">
-                            Hotel Seruni
-                        </a>
-                    </div>
-                    <div class="text-quinary tracking-wider text-sm">
-                        <i class="fa-solid fa-location-dot"></i>
-                        Bogor, Jawa Barat
-                    </div>
-                    <div class="font-bold tracking-wider text-sm text-secondary">
-                        <i class="fa-solid fa-money-bill"></i>
-                        Rp10,000,000
-                    </div>
-                </div>
-
-                <div>
-                    <div class="mb-5">
-                        <img src="../data/thumb/5.jpeg" alt="" class="rounded-md">
-                    </div>
-                    <div class="font-bold text-quaternary tracking-wide text-sm md:text-base mb-1">
-                        <a href="">
-                            Hotel Seruni
-                        </a>
-                    </div>
-                    <div class="text-quinary tracking-wider text-sm">
-                        <i class="fa-solid fa-location-dot"></i>
-                        Bogor, Jawa Barat
-                    </div>
-                    <div class="font-bold tracking-wider text-sm text-secondary">
-                        <i class="fa-solid fa-money-bill"></i>
-                        Rp10,000,000
-                    </div>
-                </div>
-
-                <div>
-                    <div class="mb-5">
-                        <img src="../data/thumb/6.jpeg" alt="" class="rounded-md">
-                    </div>
-                    <div class="font-bold text-quaternary tracking-wide text-sm md:text-base mb-1">
-                        <a href="">
-                            Hotel Seruni
-                        </a>
-                    </div>
-                    <div class="text-quinary tracking-wider text-sm">
-                        <i class="fa-solid fa-location-dot"></i>
-                        Bogor, Jawa Barat
-                    </div>
-                    <div class="font-bold tracking-wider text-sm text-secondary">
-                        <i class="fa-solid fa-money-bill"></i>
-                        Rp10,000,000
-                    </div>
-                </div>
+                <?php
+                }
+                ?>
 
             </div>
         </div>
