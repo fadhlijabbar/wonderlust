@@ -32,6 +32,8 @@ if (isset($_POST['addHotel'])) {
 if (isset($_POST['updateHotel'])) {
     $id_hotel   = $_POST['id_hotel'];
     $nama_hotel = $_POST['nama_hotel'];
+    $deskripsi = $_POST['deskripsi'];
+    $bintang = $_POST['bintang'];
     $alamat = $_POST['alamat'];
     $provinsi = $_POST['provinsi'];
     $kota = $_POST['kota'];
@@ -42,13 +44,13 @@ if (isset($_POST['updateHotel'])) {
     $checkout = $_POST['checkout'];
     $id_pengurus = $_POST['id_pengurus'];
 
-    $query = mysqli_query($conn, "UPDATE hotel SET nama_hotel = '$nama_hotel', alamat = '$alamat', provinsi = '$provinsi', kota = '$kota', lat = '$lat', lng = '$lng', telepon = '$telepon', checkin = '$checkin', checkout = '$checkout', last_edit = NOW() WHERE id_hotel = '$id_hotel' AND id_pengurus = '$id_pengurus'");
+    $query = mysqli_query($conn, "UPDATE hotel SET nama_hotel = '$nama_hotel', deskripsi='$deskripsi', bintang='$bintang', alamat = '$alamat', provinsi = '$provinsi', kota = '$kota', lat = '$lat', lng = '$lng', telepon = '$telepon', checkin = '$checkin', checkout = '$checkout', last_edit = NOW() WHERE id_hotel = '$id_hotel' AND id_pengurus = '$id_pengurus'");
     if ($query) {
         echo "<script>alert('Hotel berhasil diubah!');</script>";
         echo "<script>window.location.href='hotel.php?informasiumum&id=" . $id_hotel . "';</script>";
     } else {
         echo "<script>alert('Hotel gagal diubah!');</script>";
-        // echo "<script>window.location.href='hotel.php?informasiumum&id=" . $id_hotel . "';</script>";
+        echo "<script>window.location.href='hotel.php?informasiumum&id=" . $id_hotel . "';</script>";
     }
 }
 
@@ -508,9 +510,21 @@ if (isset($_POST['updatePbyHotel'])) {
                                             </div>
                                             <div class="mb-5">
                                                 <div class="text-sm text-quaternary mb-1">
+                                                    Deksripsi
+                                                </div>
+                                                <textarea autocomplete="off" class="border border-border w-full py-5 px-5 text-quinary text-sm rounded-md" placeholder="Masukkan deskripsi hotel" name="deskripsi" required><?php echo $dataHotel['deskripsi']; ?></textarea>
+                                            </div>
+                                            <div class="mb-5">
+                                                <div class="text-sm text-quaternary mb-1">
+                                                    Bintang
+                                                </div>
+                                                <input type="number" name="bintang" required autocomplete="off" class="border border-border w-full py-3 px-5 text-quinary text-sm rounded-md" placeholder="Masukkan bintang hotel" value="<?php echo $dataHotel['bintang']; ?>">
+                                            </div>
+                                            <div class="mb-5">
+                                                <div class="text-sm text-quaternary mb-1">
                                                     Lokasi Hotel
                                                 </div>
-                                                <textarea class="border" autocomplete="off" border-border mb-1 w-full py-5 px-5 text-quinary text-sm rounded-md" placeholder="Masukkan alamat hotel" name="alamat" required><?php echo $dataHotel['alamat']; ?></textarea>
+                                                <textarea autocomplete="off" class="border border-border mb-1 w-full py-5 px-5 text-quinary text-sm rounded-md" placeholder="Masukkan alamat hotel" name="alamat" required><?php echo $dataHotel['alamat']; ?></textarea>
                                                 <select name="provinsi" required id="provinsi" class="border border-border py-3 px-5 w-full rounded-md text-sm text-quinary mb-3">
                                                     <?php
                                                     $getProvinsi = mysqli_query($conn, "SELECT * FROM provinces WHERE id = '$dataHotel[provinsi]'");

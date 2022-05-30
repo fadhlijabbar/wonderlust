@@ -616,24 +616,12 @@ Ensure the default browser behavior of the `hidden` attribute.
   height: 100%;
 }
 
-.h-40 {
-  height: 10rem;
-}
-
 .h-20 {
   height: 5rem;
 }
 
-.h-96 {
-  height: 24rem;
-}
-
-.h-32 {
-  height: 8rem;
-}
-
-.h-60 {
-  height: 15rem;
+.h-40 {
+  height: 10rem;
 }
 
 .w-full {
@@ -750,6 +738,11 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(254 106 95 / var(--tw-bg-opacity));
 }
 
+.bg-red-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(239 68 68 / var(--tw-bg-opacity));
+}
+
 .bg-quaternary {
   --tw-bg-opacity: 1;
   background-color: rgb(36 36 36 / var(--tw-bg-opacity));
@@ -763,11 +756,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .bg-gray-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(75 85 99 / var(--tw-bg-opacity));
-}
-
-.bg-red-500 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(239 68 68 / var(--tw-bg-opacity));
 }
 
 .bg-red-400 {
@@ -963,6 +951,11 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(55 87 230 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-red-600:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(220 38 38 / var(--tw-bg-opacity));
+}
+
 .hover\:bg-secondary-hover:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(240 92 81 / var(--tw-bg-opacity));
@@ -991,11 +984,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .hover\:bg-primary:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(61 97 255 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-red-600:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(220 38 38 / var(--tw-bg-opacity));
 }
 
 .hover\:text-white:hover {

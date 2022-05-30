@@ -59,11 +59,11 @@ include "config/connect.php";
                     </a>
                 </div>
                 <div class="self-center tracking-wider text-sm mx-5 text-quinary">
-                    <a href="masuk.html">
+                    <a href="masuk.php">
                         Masuk
                     </a>
                 </div>
-                <a href="daftar.html">
+                <a href="daftar.php">
                     <div class="self-center text-sm mx-5 tracking-wider bg-secondary py-4 px-6 rounded-lg text-white hover:bg-secondary-hover hover:duration-200">
                         Daftar Sekarang
                     </div>
