@@ -20,6 +20,7 @@ $id_hotel = $_GET['id'];
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/be579e605d.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
 </head>
 
 <body class="font-poppins">
@@ -148,55 +149,75 @@ $id_hotel = $_GET['id'];
                                 <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
                                     Pilih Kamar
                                 </div>
-                                <?php
-                                $getRoom = mysqli_query($conn, "SELECT * FROM kamar WHERE id_hotel = '$data[id_hotel]' ORDER BY harga ASC");
-                                while ($dataRoom = mysqli_fetch_array($getRoom)) {
-                                ?>
-                                    <div class="border border-border rounded-md p-5 cursor-pointer mb-5">
+
+                                <form action="book.php?id=<?php echo $id_hotel ?>" method="GET">
+                                    <?php
+                                    $getRoom = mysqli_query($conn, "SELECT * FROM kamar WHERE id_hotel = '$data[id_hotel]' and tersedia>=1 ORDER BY id_kamar ASC");
+                                    $number = 1;
+                                    while ($dataRoom = mysqli_fetch_array($getRoom)) {
+                                    ?>
+
+                                        <div id="roomList<?php echo $number ?>" class="border border-border rounded-md p-5 cursor-pointer mb-5">
+                                            <div>
+                                                <div class="w-20 h-20 bg-slate-200 rounded-md float-left mr-5"></div>
+                                                <div class="float-left">
+                                                    <div class="text-sm font-bold text-quaternary mb-1">
+                                                        <?php echo $dataRoom['nama_kamar'] ?>
+                                                    </div>
+                                                    <div class="text-quinary">
+                                                        <div class="text-sm float-left mr-3">
+                                                            <i class="fa-solid fa-bed"></i>
+                                                            <?php echo $dataRoom['jenis'] ?>
+                                                        </div>
+                                                        <div class="text-sm float-left">
+                                                            <i class="fa-solid fa-person"></i>
+                                                            <?php echo $dataRoom['kapasitas'] ?> Tamu
+                                                        </div>
+                                                        <div class="clear-both"></div>
+                                                    </div>
+                                                    <div class="text-sm text-secondary font-bold">
+                                                        <i class="fa-solid fa-money-bill"></i>
+                                                        Rp<?php echo number_format($dataRoom['harga'], 2, '.', ','); ?>
+                                                    </div>
+                                                </div>
+                                                <div class="float-right">
+                                                    <div class="text-sm text-primary">
+                                                        Tersedia <?php echo $dataRoom['tersedia'] ?> kamar
+                                                    </div>
+                                                </div>
+                                                <div class="clear-both"></div>
+
+                                                <div class="">
+                                                    <input type="text" id="id_kamar<?php echo $number; ?>" name="id_kamar<?php echo $number; ?>" value="0">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php
+                                        $number++;
+                                    }
+                                    ?>
+                                    <div class="grid grid-cols-2 gap-5 mb-5">
                                         <div>
-                                            <div class="w-20 h-20 bg-slate-200 rounded-md float-left mr-5"></div>
-                                            <div class="float-left">
-                                                <div class="text-sm font-bold text-quaternary mb-1">
-                                                    <?php echo $dataRoom['nama_kamar'] ?>
-                                                </div>
-                                                <div class="text-quinary">
-                                                    <div class="text-sm float-left mr-3">
-                                                        <i class="fa-solid fa-bed"></i>
-                                                        <?php echo $dataRoom['jenis'] ?>
-                                                    </div>
-                                                    <div class="text-sm float-left">
-                                                        <i class="fa-solid fa-person"></i>
-                                                        <?php echo $dataRoom['kapasitas'] ?> Tamu
-                                                    </div>
-                                                    <div class="clear-both"></div>
-                                                </div>
-                                                <div class="text-sm text-secondary font-bold">
-                                                    <i class="fa-solid fa-money-bill"></i>
-                                                    Rp<?php echo number_format($dataRoom['harga'], 2, '.', ','); ?>
-                                                </div>
+                                            <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
+                                                Check In
                                             </div>
-                                            <div class="float-right">
-                                                <div class="text-sm text-primary">
-                                                    Tersedia <?php echo $dataRoom['tersedia'] ?> kamar
-                                                </div>
+                                            <div>
+                                                <input type="date" name="checkin" required class=" w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
                                             </div>
-                                            <div class="clear-both"></div>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
+                                                Check Out
+                                            </div>
+                                            <div>
+                                                <input type="date" name="checkout" required class=" w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
+                                            </div>
                                         </div>
                                     </div>
-                                <?php } ?>
-                                <input type="hidden" name="id_kamar" value="">
-                                <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
-                                    Pilih Jadwal
-                                </div>
-                                <div class="grid grid-cols-2 gap-5 mb-5">
-                                    <div>
-                                        <input type="date" placeholder="Masukkan kata sandi Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
-                                    </div>
-                                    <div>
-                                        <input type="date" placeholder="Masukkan kata sandi Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
-                                    </div>
-                                </div>
-                                <input type="submit" value="Pesan Sekarang" class="w-full inline tracking-wider bg-secondary py-4 text-sm rounded-md text-white hover:bg-secondary-hover cursor-pointer">
+
+                                    <input type="text" name="form_total" value="<?php echo $number ?>">
+                                    <input type="submit" value="Pesan Sekarang" class="w-full inline tracking-wider bg-secondary py-4 text-sm rounded-md text-white hover:bg-secondary-hover cursor-pointer">
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -789,12 +810,33 @@ $id_hotel = $_GET['id'];
         <div class=" font-playfair-display text-white font-bold text-base">
             Wonderlust
         </div>
-        <div>
+        <div id="numberr">
             © 2022 Wonderlust Indonesia
         </div>
     </footer>
     <!-- End Footer -->
 
 </body>
+
+<script>
+    <?php
+    $getRoom = mysqli_query($conn, "SELECT * FROM kamar WHERE id_hotel = '$data[id_hotel]' and tersedia>=1 ORDER BY id_kamar ASC");
+    $number = 1;
+    while ($dataRoom = mysqli_fetch_array($getRoom)) {
+    ?>
+        $("#roomList<?php echo $number; ?>").click(function() {
+            if ($("#roomList<?php echo $number; ?>").hasClass("border-secondary")) {
+                $("#roomList<?php echo $number; ?>").removeClass("border-secondary");
+                $("#id_kamar<?php echo $number; ?>").val(0);
+            } else {
+                $("#roomList<?php echo $number; ?>").toggleClass("border-secondary");
+                $("#id_kamar<?php echo $number; ?>").val(<?php echo $dataRoom['id_kamar'] ?>);
+            }
+        });
+    <?php
+        $number++;
+    }
+    ?>
+</script>
 
 </html>

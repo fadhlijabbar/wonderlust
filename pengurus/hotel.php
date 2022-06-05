@@ -6,6 +6,8 @@ session_start();
 
 if (isset($_POST['addHotel'])) {
     $nama_hotel = $_POST['nama_hotel'];
+    $deskripsi = $_POST['deskripsi'];
+    $bintang = $_POST['bintang'];
     $alamat = $_POST['alamat'];
     $provinsi = $_POST['provinsi'];
     $kota = $_POST['kota'];
@@ -16,7 +18,7 @@ if (isset($_POST['addHotel'])) {
     $checkout = $_POST['checkout'];
     $id_pengurus = $_SESSION['id_pengurus'];
 
-    $query = mysqli_query($conn, "INSERT INTO hotel (nama_hotel, alamat, provinsi, kota, lat, lng, telepon, checkin, checkout, id_pengurus, status, last_edit) VALUES ('$nama_hotel', '$alamat', '$provinsi', '$kota', '$lat', '$lng', '$telepon', '$checkin', '$checkout', '$id_pengurus', '0', NOW())");
+    $query = mysqli_query($conn, "INSERT INTO hotel (nama_hotel, deskripsi, bintang, alamat, provinsi, kota, lat, lng, telepon, checkin, checkout, id_pengurus, status, last_edit) VALUES ('$nama_hotel', '$deskripsi', '$bintang', '$alamat', '$provinsi', '$kota', '$lat', '$lng', '$telepon', '$checkin', '$checkout', '$id_pengurus', '0', NOW())");
     if ($query) {
         $getHotel = mysqli_query($conn, "SELECT * FROM hotel WHERE id_pengurus = '$id_pengurus' ORDER BY id_hotel DESC LIMIT 1");
         $dataHotel = mysqli_fetch_array($getHotel);
@@ -592,6 +594,18 @@ if (isset($_POST['updatePbyHotel'])) {
                                                     Nama Hotel
                                                 </div>
                                                 <input type="text" name="nama_hotel" required autocomplete="off" class="border border-border w-full py-3 px-5 text-quinary text-sm rounded-md" placeholder="Masukkan nama hotel">
+                                            </div>
+                                            <div class="mb-5">
+                                                <div class="text-sm text-quaternary mb-1">
+                                                    Deksripsi
+                                                </div>
+                                                <textarea class="border border-border w-full py-5 px-5 text-quinary text-sm rounded-md" placeholder="Masukkan deskripsi hotel" name="deskripsi" required></textarea>
+                                            </div>
+                                            <div class="mb-5">
+                                                <div class="text-sm text-quaternary mb-1">
+                                                    Bintang
+                                                </div>
+                                                <input type="number" name="bintang" required autocomplete="off" class="border border-border w-full py-3 px-5 text-quinary text-sm rounded-md" placeholder="Masukkan bintang hotel">
                                             </div>
                                             <div class="mb-5">
                                                 <div class="text-sm text-quaternary mb-1">

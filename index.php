@@ -119,7 +119,7 @@ include "config/connect.php";
                     </a>
                 </div>
                 <div class="grid justify-items-center">
-                    <img src="assets/img/hero-illust.png" alt="">
+                    <img src="src/assets/img/hero-illust.png" alt="">
                 </div>
             </div>
         </div>
