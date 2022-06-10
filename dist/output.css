@@ -164,6 +164,7 @@ sup {
 */
 
 table {
+  width: 100%;
   text-indent: 0;
   /* 1 */
   border-color: inherit;
@@ -1112,4 +1113,8 @@ Ensure the default browser behavior of the `hidden` attribute.
     padding-left: 8rem;
     padding-right: 8rem;
   }
+
+.usr-img{
+  border-radius: 100%;
+}
 }

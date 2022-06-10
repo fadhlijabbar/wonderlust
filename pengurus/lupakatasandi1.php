@@ -1,9 +1,6 @@
 <?php
-    session_start();
-    $err    ="";
-    $sukses ="";
-    $email  ="";
-
+    include "../config/connect.php";
+    
     if (isset($_POST['submit'])) {
         $email  = $_POST['email'];
         if ($email == '') {
@@ -14,31 +11,26 @@
                 $data = mysqli_fetch_array($query);
                 $_SESSION['nama'] = $data['nama'];
                 $_SESSION['email'] = $data['email'];
+                $to = $_SESSION['email'];
+
+                $token_reset    = md5(rand(0,1000));
+                $judul_email    = "Ganti Password";
+                $isi_email      = "Seseorang meminta untuk mengganti password. Silahkan klik link dibawah ini: <br/>";
+                $isi_email      .= base_url()."/ganti_password.php?email=$email&token=$token_reset";
+                // kirim_email($email, $email, $judul_email, $isi_email);
+                $headers="MIME-Version: 1.0"."\r\n";
+                $headers .= "Content-type:text/html;charset=UTF-8"."\r\n";
+
+                $headers .="From: <aryaputrahaidar@gmail.com>"."\r\n";
+                
+                mail($to,$judul_email,$isi_email,$headers);
+
+                $query  = mysqli_query($conn, "UPDATE pengurus SET token_reset = '$token_reset WHERE email = '$email'");
+                $sukses = "<script>alert('Link ganti password sudah dikirim ke email anda');</script>";
             }else {
                 echo "<script>alert('Email: $email tidak ditemukan');</script>";
-                echo "<script>location='lupa-sandi.php';</script>";
+                echo "<script>location='lupakatasandi1.php';</script>";
             }
-            // $sql1   = "SELECT * FROM pengurus where email = '$email'";
-            // $q1     = mysqli_query($conn, $sql1);
-            // $n1     = mysqli_num_rows($q1);
-
-            // if ($n1 < 1) {
-            //     $err    = "Email: <b>$email</b> tidak ditemukan";
-            // }
-        }
-        
-        if (empty($err)) {
-            $token_reset    = md5(rand(0,1000));
-            $judul_email    = "Ganti Password";
-            $isi_email      = "Seseorang meminta untuk mengganti password. Silahkan klik link dibawah ini: <br/>";
-            $isi_email      .= base_url()."/ganti_password.php?email=$email&token=$token_reset";
-            kirim_email($email, $email, $judul_email, $isi_email);
-
-            $query  = mysqli_query($conn, "UPDATE pengurus SET token_reset = '$token_reset WHERE email = '$email'");
-            $sukses = "<script>alert('Link ganti password sudah dikirim ke email anda');</script>";
-            // $sql1   = "update pengurus set token_reset = '$token_reset' where email = $email";
-            // mysqli_query($conn, $sql1);
-            // $sukses = "Link ganti password sudah dikirim ke email anda.";
         }
 
     }
@@ -87,17 +79,21 @@
             <div class="font-bold text-sm text-quaternary mb-2">
                 Email
             </div>
+            <?php if($err){echo"<div class='error'>$err</div>";}?>
+            <?php if($sukses){echo"<div class='sukses'>$sukses</div>";}?>
             <form action="" method="POST">
-            <input type="text" name="email" placeholder="Masukkan email Anda" value="<?php echo $email?>"
-                class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border mb-5">
-            <input type="submit" name="submit" value="submit"
-                class="w-full inline tracking-wider bg-secondary py-4 text-sm rounded-md text-white hover:bg-secondary-hover hover:duration-200 cursor-pointer mb-2">
+                <input type="text" name="email" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border mb-5" value="<?php echo $email?>">
+                <input type="submit" name="submit" value="Lupa Password" class="w-full inline tracking-wider bg-secondary py-4 text-sm rounded-md text-white hover:bg-secondary-hover hover:duration-200 cursor-pointer mb-2"/>
             </form>
         </div>
     </div>
-
+    <!-- w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border mb-5
+    <input type="submit" name="submit" value="Atur Ulang Sandi" class="w-full inline tracking-wider bg-secondary py-4 text-sm rounded-md text-white hover:bg-secondary-hover hover:duration-200 cursor-pointer mb-2"> -->
+    <!-- <input type="text" placeholder="Masukkan email Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border mb-5">
+    <a href="masuk.php">
+    <input type="submit" value="Atur Ulang Sandi" class="w-full inline tracking-wider bg-secondary py-4 text-sm rounded-md text-white hover:bg-secondary-hover hover:duration-200 cursor-pointer mb-2">
+    <a href="masuk.php">
+    <input type="submit" value="Batal" class="w-full inline tracking-wider bg-white py-4 text-sm rounded-md text-quaternary border border-border hover:bg-primary hover:duration-200 hover:text-white cursor-pointer"> -->
 </body>
 
 </html>
-
-<!--     -->

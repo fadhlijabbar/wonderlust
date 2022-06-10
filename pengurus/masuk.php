@@ -69,7 +69,7 @@ if (isset($_POST['in'])) {
                 </div>
                 <input type="password" name="password" required autocomplete="off" placeholder="Masukkan kata sandi Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border mb-5">
                 <div class="text-sm text-quinary text-left mb-2">
-                <a href="lupa-sandi.php" class="text-secondary">Lupa Kata Sandi?</a>
+                <a href="lupakatasandi1.php" class="text-secondary">Lupa Kata Sandi?</a>
                 </div>
                 <input type="submit" value="Masuk" class="w-full inline tracking-wider bg-secondary py-4 text-sm rounded-md text-white hover:bg-secondary-hover cursor-pointer mb-14">
             </form>

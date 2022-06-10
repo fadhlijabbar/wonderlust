@@ -12,7 +12,7 @@ if (isset($_POST['register'])) {
             echo "<script>alert('Akun Anda berhasil didaftarkan!');</script>";
             echo "<script>location='masuk.php';</script>";
         } else {
-            echo "<script>alert('Aku Anda gagal didaftarkan!');</script>";
+            echo "<script>alert('Akun Anda gagal didaftarkan!');</script>";
             echo "<script>location='daftar.php';</script>";
         }
     } else {

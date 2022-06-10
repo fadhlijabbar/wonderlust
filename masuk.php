@@ -5,7 +5,7 @@ include "config/connect.php";
 session_start();
 if (isset($_POST['in'])) {
     $email = $_POST['email'];
-    $password = md5($_POST['password']);
+    $password = $_POST['password'];
 
     $query = mysqli_query($conn, "SELECT * FROM pengguna WHERE email = '$email' AND password = '$password'");
     if (mysqli_num_rows($query) > 0) {
@@ -13,7 +13,7 @@ if (isset($_POST['in'])) {
         $_SESSION['id_pengguna'] = $data['id_pengguna'];
         $_SESSION['nama'] = $data['nama'];
         $_SESSION['email'] = $data['email'];
-        echo "<script>location='dashboard.php';</script>";
+        echo "<script>location='dashboard-pengguna.php';</script>";
     } else {
         echo "<script>alert('Username atau kata sandi yang Anda masukkan salah!');</script>";
         echo "<script>location='masuk.php';</script>";
