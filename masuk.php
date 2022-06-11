@@ -63,7 +63,7 @@ if (isset($_POST['in'])) {
                 <div class="font-bold text-sm text-quaternary mb-2">
                     Email
                 </div>
-                <input type="text" name="email" required autocomplete="off" placeholder="Masukkan email Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border mb-5">
+                <input type="email" name="email" required autocomplete="off" placeholder="Masukkan email Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border mb-5">
                 <div class="font-bold text-sm text-quaternary mb-2">
                     Kata Sandi
                 </div>

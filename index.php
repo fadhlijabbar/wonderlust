@@ -2,6 +2,8 @@
 
 include "config/connect.php";
 
+session_start();
+
 ?>
 
 <!doctype html>
@@ -51,25 +53,46 @@ include "config/connect.php";
             </div>
             <!-- End Bars Button -->
 
-            <!-- Menu -->
-            <div class="float-right h-14 hidden md:flex">
-                <div class="self-center tracking-wider text-sm mx-5 text-quinary">
-                    <a href="">
-                        Tentang Kami
-                    </a>
-                </div>
-                <div class="self-center tracking-wider text-sm mx-5 text-quinary">
-                    <a href="masuk.php">
-                        Masuk
-                    </a>
-                </div>
-                <a href="daftar.php">
-                    <div class="self-center text-sm mx-5 tracking-wider bg-secondary py-4 px-6 rounded-lg text-white hover:bg-secondary-hover hover:duration-200">
-                        Daftar Sekarang
+            <?php
+            if (isset($_SESSION['id_pengguna'])) {
+            ?>
+                <!-- Menu -->
+                <div class="float-right h-14 hidden md:flex">
+                    <div class="self-center text-sm text-quinary cursor-pointer">
+                        <a href="dashboard.php">
+                            Fathoni Zikri Nugroho
+                            <i class="fa-solid fa-circle-user text-quaternary"></i>
+                        </a>
                     </div>
-                </a>
-            </div>
-            <!-- End Menu -->
+                    </a>
+                </div>
+                <!-- End Menu -->
+            <?php
+            } else {
+            ?>
+                <!-- Menu -->
+                <div class="float-right h-14 hidden md:flex">
+                    <div class="self-center tracking-wider text-sm mx-5 text-quinary">
+                        <a href="">
+                            Tentang Kami
+                        </a>
+                    </div>
+                    <div class="self-center tracking-wider text-sm mx-5 text-quinary">
+                        <a href="masuk.php">
+                            Masuk
+                        </a>
+                    </div>
+                    <a href="daftar.php">
+                        <div class="self-center text-sm mx-5 tracking-wider bg-secondary py-4 px-6 rounded-lg text-white hover:bg-secondary-hover hover:duration-200">
+                            Daftar Sekarang
+                        </div>
+                    </a>
+                </div>
+                <!-- End Menu -->
+
+            <?php
+            }
+            ?>
 
         </div>
     </header>
@@ -206,8 +229,10 @@ include "config/connect.php";
                 Kami sangat bangga pada kamu. Oleh karena itu, kami berikan potongan harga dan promo lainnya.
             </div>
             <div class="text-center">
-                <input type="text" placeholder="Cari hotel atau penginapan" class="py-4 px-5 text-sm w-52 md:w-96 inline rounded-md focus:outline-none text-quaternary tracking-wider">
-                <input type="submit" value="Cari" class="inline tracking-wider bg-secondary py-4 px-6 text-sm rounded-md text-white hover:bg-secondary-hover cursor-pointer">
+                <form action="search.php" method="GET">
+                    <input type="text" name="q" placeholder="Cari hotel atau penginapan" class="py-4 px-5 text-sm w-52 md:w-96 inline rounded-md focus:outline-none text-quaternary tracking-wider">
+                    <input type="submit" value="Cari" class="inline tracking-wider bg-secondary py-4 px-6 text-sm rounded-md text-white hover:bg-secondary-hover cursor-pointer">
+                </form>
             </div>
         </div>
     </div>

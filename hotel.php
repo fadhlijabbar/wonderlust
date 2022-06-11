@@ -150,7 +150,7 @@ $id_hotel = $_GET['id'];
                                     Pilih Kamar
                                 </div>
 
-                                <form action="book.php?id=<?php echo $id_hotel ?>" method="GET">
+                                <form action="book.php" method="GET">
                                     <?php
                                     $getRoom = mysqli_query($conn, "SELECT * FROM kamar WHERE id_hotel = '$data[id_hotel]' and tersedia>=1 ORDER BY id_kamar ASC");
                                     $number = 1;
@@ -188,7 +188,7 @@ $id_hotel = $_GET['id'];
                                                 <div class="clear-both"></div>
 
                                                 <div class="">
-                                                    <input type="text" id="id_kamar<?php echo $number; ?>" name="id_kamar<?php echo $number; ?>" value="0">
+                                                    <input type="hidden" id="id_kamar<?php echo $number; ?>" name="id_kamar<?php echo $number; ?>" value="0">
                                                 </div>
                                             </div>
                                         </div>
@@ -215,7 +215,8 @@ $id_hotel = $_GET['id'];
                                         </div>
                                     </div>
 
-                                    <input type="text" name="form_total" value="<?php echo $number ?>">
+                                    <input type="hidden" name="id" value="<?php echo $data['id_hotel'] ?>">
+                                    <input type="hidden" name="form_total" value="<?php echo $number - 1 ?>">
                                     <input type="submit" value="Pesan Sekarang" class="w-full inline tracking-wider bg-secondary py-4 text-sm rounded-md text-white hover:bg-secondary-hover cursor-pointer">
                                 </form>
                             </div>

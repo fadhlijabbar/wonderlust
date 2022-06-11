@@ -8,7 +8,7 @@ if (isset($_POST['register'])) {
         $email = $_POST['email'];
         $password = md5($_POST['password']);
 
-        $query = mysqli_query($conn, "INSERT INTO pengurus VALUES (null, '$nama', '$email', '$password')");
+        $query = mysqli_query($conn, "INSERT INTO pengurus VALUES (null, '$nama', '$email', '$password','0')");
 
         if ($query) {
             echo "<script>alert('Berhasil membuat akun!');</script>";

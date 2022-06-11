@@ -7,7 +7,7 @@ if (isset($_POST['register'])) {
     $password = md5($_POST['password']);
     $password2 = md5($_POST['password2']);
     if ($password == $password2) {
-        $query = mysqli_query($conn, "INSERT INTO pengguna (nama, email, password) VALUES ('$nama', '$email', '$password')");
+        $query = mysqli_query($conn, "INSERT INTO pengguna (nama, email, password, token_reset) VALUES ('$nama', '$email', '$password', 0)");
         if ($query) {
             echo "<script>alert('Akun Anda berhasil didaftarkan!');</script>";
             echo "<script>location='masuk.php';</script>";

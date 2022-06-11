@@ -210,26 +210,23 @@ include "config/connect.php";
     <!-- End Hotel Detail Content -->
 
     <!-- Book Detail Content -->
-    <div class="py-14">
+    <!-- <div class="py-14">
         <div class="w-full">
             <div class="container mx-auto px-6">
                 <div>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
                         <div>
-                            <form action="confirm.php" method="POST">
+                            <form action="" method="POST">
                                 <div class=" font-bold text-base text-quaternary tracking-wider mb-5">
                                     Informasi Pemesan
                                 </div>
                                 <div class="py-7 px-5 border border-border rounded-md mb-10">
                                     <div class="mb-5">
-                                        <input type="hidden" name="id" value="<?php echo $_GET['id'] ?>">
-                                        <input type="hidden" name="checkin" value="<?php echo $_GET['checkin'] ?>">
-                                        <input type="hidden" name="checkout" value="<?php echo $_GET['checkout'] ?>">
                                         <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
                                             Nama
                                         </div>
                                         <div>
-                                            <input type="text" autocomplete="off" required name="nama_pemesan" placeholder="Masukkan nama Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
+                                            <input type="text" name="nama_pemesan" placeholder="Masukkan nama Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
                                         </div>
                                     </div>
                                     <div>
@@ -237,10 +234,7 @@ include "config/connect.php";
                                             Email
                                         </div>
                                         <div>
-                                            <input type="email" autocomplete="off" required name="email_pemesan" placeholder="Masukkan alamat email Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
-                                        </div>
-                                        <div>
-                                            <input type="hidden" name="form_total" value="<?php echo $_GET['form_total'] ?>">
+                                            <input type="text" name="email_pemesan" placeholder="Masukkan alamat email Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
                                         </div>
                                     </div>
                                 </div>
@@ -275,7 +269,6 @@ include "config/connect.php";
                                             <div class="float-right">
                                                 Rp<?php echo number_format($hargaperkamar, 2, '.', ','); ?>
                                             </div>
-                                            <input type="hidden" name="<?php echo "id_kamar" . $i ?>" value="<?php echo $_GET['id_kamar' . $i]; ?>">
                                             <div class="clear-both"></div>
                                         </div>
                                     <?php
@@ -374,113 +367,194 @@ include "config/connect.php";
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- End Book Detail Content -->
 
     <!-- Book Review -->
-    <!-- <div class="py-14">
+    <div class="py-14">
         <div class="w-full">
             <div class="container mx-auto px-6">
                 <div>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
                         <div>
-                            <div class=" font-bold text-base text-quaternary tracking-wider mb-1">
-                                Review
-                            </div>
-                            <div class=" text-sm text-quinary mb-5">
-                                Periksa kembali pesanan Anda dengan benar!
-                            </div>
-                            <div class="py-7 px-5 border border-border rounded-md mb-10">
-                                <img src="../data/thumb/1.jpeg" alt="" class="rounded-md mb-5">
-                                <div class="font-bold text-base text-quaternary mb-5">
-                                    Hotel Seruni
+                            <form action="" method="POST">
+                                <div class=" font-bold text-base text-quaternary tracking-wider mb-1">
+                                    Review
                                 </div>
-                                <div class="grid grid-cols-2 pb-10 mb-10 border-b border-border">
-                                    <div>
-                                        <div class="mb-5">
-                                            <div class="text-sm text-quinary">
-                                                Check In (Mulai 15:00)
+                                <div class=" text-sm text-quinary mb-5">
+                                    Periksa kembali pesanan Anda dengan benar!
+                                </div>
+                                <div class="py-7 px-5 border border-border rounded-md mb-10">
+                                    <?php
+                                    $id_hotel = $_POST['id'];
+                                    $query = mysqli_query($conn, "SELECT * FROM hotel WHERE id_hotel='$id_hotel'");
+                                    $data = mysqli_fetch_array($query);
+                                    $getPhoto = mysqli_query($conn, "SELECT * FROM foto WHERE id_hotel='$id_hotel'");
+                                    $dataPhoto = mysqli_fetch_array($getPhoto);
+                                    ?>
+                                    <input type="hidden" name="id" value="<?php echo $id_hotel; ?>">
+                                    <input type="hidden" name="checkin" value="<?php echo $_POST['checkin']; ?>">
+                                    <input type="hidden" name="checkout" value="<?php echo $_POST['checkout']; ?>">
+                                    <input type="hidden" name="form_total" value="<?php echo $_POST['form_total']; ?>">
+
+                                    <img src="data/thumb/<?php echo $dataPhoto['nama_foto']; ?>" alt="" class="rounded-md mb-5">
+                                    <div class="font-bold text-base text-quaternary mb-5">
+                                        <?php echo $data['nama_hotel'] ?>
+                                    </div>
+                                    <div class="grid grid-cols-2 pb-10 mb-10 border-b border-border">
+                                        <div>
+                                            <div class="mb-5">
+                                                <div class="text-sm text-quinary">
+                                                    Check In (Mulai 15:00)
+                                                </div>
+                                                <div class="font-bold text-sm text-quaternary">
+                                                    <?php
+                                                    $month = date('F', strtotime($_POST['checkin']));
+                                                    $day = date('d', strtotime($_POST['checkin']));
+                                                    $year = date('Y', strtotime($_POST['checkin']));
+                                                    echo $day . " " . $month . " " . $year;
+                                                    ?>
+                                                </div>
                                             </div>
-                                            <div class="font-bold text-sm text-quaternary">
-                                                20 Oktober 2022
+                                            <div>
+                                                <div class="text-sm text-quinary">
+                                                    Check Out (Sebelum 15:00)
+                                                </div>
+                                                <div class="font-bold text-sm text-quaternary">
+                                                    <?php
+                                                    $month = date('F', strtotime($_POST['checkout']));
+                                                    $day = date('d', strtotime($_POST['checkout']));
+                                                    $year = date('Y', strtotime($_POST['checkout']));
+                                                    echo $day . " " . $month . " " . $year;
+                                                    ?>
+                                                </div>
                                             </div>
                                         </div>
                                         <div>
-                                            <div class="text-sm text-quinary">
-                                                Check Out (Sebelum 15:00)
-                                            </div>
-                                            <div class="font-bold text-sm text-quaternary">
-                                                23 Oktober 2022
+                                            <div>
+                                                <div class="text-sm text-quinary">
+                                                    Durasi
+                                                </div>
+                                                <div class="text-sm text-quaternary">
+                                                    <?php
+                                                    $checkin = $_POST['checkin'];
+                                                    $checkout = $_POST['checkout'];
+
+                                                    $checkinNew = strtotime($checkin);
+                                                    $checkoutNew = strtotime($checkout);
+
+                                                    $jumlah_hari = ($checkoutNew - $checkinNew) / (60 * 60 * 24);
+                                                    echo $jumlah_hari;
+                                                    ?>
+                                                    Malam
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div>
-                                        <div>
-                                            <div class="text-sm text-quinary">
-                                                Durasi
+                                        <?php
+                                        $query = mysqli_query($conn, "SELECT * FROM hotel WHERE id_hotel='$_POST[id]'");
+                                        $data = mysqli_fetch_array($query);
+                                        $form_total = $_POST['form_total'];
+                                        $harga = 0;
+                                        for ($i = 1; $i <= $form_total; $i++) {
+                                            ${"id_kamar" . $i} = $_POST['id_kamar' . $i];
+                                            $getRoom = mysqli_query($conn, "SELECT * FROM kamar WHERE id_kamar='${"id_kamar" .$i}'");
+                                            $dataRoom = mysqli_fetch_array($getRoom);
+                                            $hargaperkamar = $dataRoom['harga'] * $jumlah_hari;
+                                        ?>
+                                            <div class="<?php if ($i != $form_total) {
+                                                            echo "mb-5";
+                                                        } ?>">
+                                                <div class="w-20 h-20 bg-slate-200 rounded-md float-left mr-5"></div>
+                                                <div class="float-left">
+                                                    <div class="text-sm font-bold text-quaternary mb-1">
+                                                        (1x) <?php echo $dataRoom['nama_kamar'] ?>
+                                                    </div>
+                                                    <div class="text-quinary">
+                                                        <div class="text-sm mr-3">
+                                                            <i class="fa-solid fa-bed"></i>
+                                                            <?php echo $dataRoom['jenis'] ?>
+                                                        </div>
+                                                        <div class="text-sm">
+                                                            <i class="fa-solid fa-person"></i>
+                                                            <?php echo $dataRoom['kapasitas'] ?> Tamu
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="clear-both"></div>
+                                                <input type="hidden" name="<?php echo "id_kamar" . $i ?>" value="<?php echo ${"id_kamar" . $i} ?>">
                                             </div>
-                                            <div class="text-sm text-quaternary">
-                                                3 Malam
-                                            </div>
-                                        </div>
+                                        <?php
+                                        }
+                                        ?>
                                     </div>
                                 </div>
-                                <div>
-                                    <div>
-                                        <div class="w-20 h-20 bg-slate-200 rounded-md float-left mr-5"></div>
+                                <div class=" font-bold text-base text-quaternary tracking-wider mb-5">
+                                    Rincian Biaya
+                                </div>
+                                <div class="py-7 px-5 border border-border rounded-md mb-10">
+                                    <?php
+
+                                    $checkin = $_POST['checkin'];
+                                    $checkout = $_POST['checkout'];
+
+                                    $checkinNew = strtotime($checkin);
+                                    $checkoutNew = strtotime($checkout);
+
+                                    $jumlah_hari = ($checkoutNew - $checkinNew) / (60 * 60 * 24);
+
+                                    $query = mysqli_query($conn, "SELECT * FROM hotel WHERE id_hotel='$_POST[id]'");
+                                    $data = mysqli_fetch_array($query);
+                                    $form_total = $_POST['form_total'];
+                                    $harga = 0;
+                                    for ($i = 1; $i <= $form_total; $i++) {
+                                        ${"id_kamar" . $i} = $_POST['id_kamar' . $i];
+                                        $getRoom = mysqli_query($conn, "SELECT * FROM kamar WHERE id_kamar='${"id_kamar" .$i}'");
+                                        $dataRoom = mysqli_fetch_array($getRoom);
+                                        $hargaperkamar = $dataRoom['harga'] * $jumlah_hari;
+                                    ?>
+                                        <div class="p-5 border border-border rounded-md text-sm text-quaternary mb-2">
+                                            <div class="float-left">
+                                                (1x) <?php echo $dataRoom['jenis'] ?> (<?php echo $jumlah_hari ?> malam)
+                                            </div>
+                                            <div class="float-right">
+                                                Rp<?php echo number_format($hargaperkamar, 2, '.', ','); ?>
+                                            </div>
+                                            <input type="hidden" name="<?php echo "id_kamar" . $i ?>" value="<?php echo $_POST['id_kamar' . $i]; ?>">
+                                            <div class="clear-both"></div>
+                                        </div>
+                                    <?php
+                                        $harga += $hargaperkamar;
+                                    }
+                                    ?>
+                                    <div class="p-5 border border-border rounded-md text-sm text-quaternary mb-2">
                                         <div class="float-left">
-                                            <div class="text-sm font-bold text-quaternary mb-1">
-                                                (1x) Single Bed Room
-                                            </div>
-                                            <div class="text-quinary">
-                                                <div class="text-sm mr-3">
-                                                    <i class="fa-solid fa-bed"></i>
-                                                    1 Single Bed
-                                                </div>
-                                                <div class="text-sm">
-                                                    <i class="fa-solid fa-person"></i>
-                                                    1 Tamu
-                                                </div>
-                                            </div>
+                                            PPN 11%
+                                        </div>
+                                        <div class="float-right">
+                                            <?php
+                                            $ppn = $harga * 0.11;
+                                            echo "Rp" . number_format($ppn, 2, '.', ',');
+                                            ?>
+                                        </div>
+                                        <div class="clear-both"></div>
+                                    </div>
+                                    <div class="p-5 border border-border rounded-md text-sm text-quaternary font-bold">
+                                        <div class="float-left">
+                                            Total
+                                        </div>
+                                        <div class="float-right">
+                                            <?php
+                                            $totalharga = $harga + $ppn;
+                                            echo "Rp" . number_format($totalharga, 2, '.', ',');
+                                            ?>
                                         </div>
                                         <div class="clear-both"></div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class=" font-bold text-base text-quaternary tracking-wider mb-5">
-                                Rincian Biaya
-                            </div>
-                            <div class="py-7 px-5 border border-border rounded-md mb-10">
-                                <div class="p-5 border border-border rounded-md text-sm text-quaternary font-bold mb-2">
-                                    <div class="float-left">
-                                        Total
-                                    </div>
-                                    <div class="float-right">
-                                        Rp1,110,000
-                                    </div>
-                                    <div class="clear-both"></div>
-                                </div>
-                                <div class="p-5 border border-border rounded-md text-sm text-quaternary mb-2">
-                                    <div class="float-left">
-                                        (1x) Single Bed Room (3 malam)
-                                    </div>
-                                    <div class="float-right">
-                                        Rp1,000,000
-                                    </div>
-                                    <div class="clear-both"></div>
-                                </div>
-                                <div class="p-5 border border-border rounded-md text-sm text-quaternary">
-                                    <div class="float-left">
-                                        PPN 11%
-                                    </div>
-                                    <div class="float-right">
-                                        Rp110,000
-                                    </div>
-                                    <div class="clear-both"></div>
-                                </div>
-                            </div>
-                            <input type="submit" value="Lanjutkan Pembayaran"
-                                class="tracking-wider bg-secondary py-4 px-6 text-sm rounded-md text-white hover:bg-secondary-hover hover:duration-200 cursor-pointer">
+                                <input type="submit" value="Konfirmasi dan Lanjutkan Pembayaran" class="tracking-wider bg-secondary py-4 px-6 text-sm rounded-md text-white hover:bg-secondary-hover hover:duration-200 cursor-pointer">
+                            </form>
                         </div>
                         <div>
                             <div class=" font-bold text-base text-quaternary tracking-wider mb-5">
@@ -492,15 +566,7 @@ include "config/connect.php";
                                         Nama
                                     </div>
                                     <div class="text-sm font-bold text-quaternary tracking-wider">
-                                        Fathoni Zikri Nugroho
-                                    </div>
-                                </div>
-                                <div class="mb-5">
-                                    <div class="text-sm text-quinary tracking-wider">
-                                        Nomor Telepon
-                                    </div>
-                                    <div class="text-sm font-bold text-quaternary tracking-wider">
-                                        08123456789
+                                        <?php echo $_POST['nama_pemesan'] ?>
                                     </div>
                                 </div>
                                 <div class="">
@@ -508,20 +574,7 @@ include "config/connect.php";
                                         Email
                                     </div>
                                     <div class="text-sm font-bold text-quaternary tracking-wider">
-                                        fathoni@gmail.com
-                                    </div>
-                                </div>
-                            </div>
-                            <div class=" font-bold text-base text-quaternary tracking-wider mb-5">
-                                Tamu
-                            </div>
-                            <div class="py-7 px-5 border border-border rounded-md">
-                                <div class="">
-                                    <div class="text-sm text-quinary tracking-wider">
-                                        Nama
-                                    </div>
-                                    <div class="text-sm font-bold text-quaternary tracking-wider">
-                                        Fathoni Zikri Nugroho
+                                        <?php echo $_POST['email_pemesan'] ?>
                                     </div>
                                 </div>
                             </div>
@@ -530,7 +583,7 @@ include "config/connect.php";
                 </div>
             </div>
         </div>
-    </div> -->
+    </div>
     <!-- End Book Review -->
 
     <!-- Payment -->

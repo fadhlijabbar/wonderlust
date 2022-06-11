@@ -7,6 +7,8 @@ module.exports = {
     'index.php',
     'hotel.php',
     'daftar.php',
+    'search.php',
+    'dashboard.php',
     'src/index.html',
     'src/masuk.html',
     'src/daftar.html',
