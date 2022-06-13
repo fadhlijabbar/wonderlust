@@ -12,6 +12,7 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wonderlust</title>
     <link href="/Wonderlust/dist/output.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,12 +56,13 @@ session_start();
 
             <?php
             if (isset($_SESSION['id_pengguna'])) {
+
             ?>
                 <!-- Menu -->
                 <div class="float-right h-14 hidden md:flex">
                     <div class="self-center text-sm text-quinary cursor-pointer">
                         <a href="dashboard.php">
-                            Fathoni Zikri Nugroho
+                            <?php echo $_SESSION['nama']; ?>
                             <i class="fa-solid fa-circle-user text-quaternary"></i>
                         </a>
                     </div>
@@ -72,11 +74,6 @@ session_start();
             ?>
                 <!-- Menu -->
                 <div class="float-right h-14 hidden md:flex">
-                    <div class="self-center tracking-wider text-sm mx-5 text-quinary">
-                        <a href="">
-                            Tentang Kami
-                        </a>
-                    </div>
                     <div class="self-center tracking-wider text-sm mx-5 text-quinary">
                         <a href="masuk.php">
                             Masuk
@@ -100,11 +97,6 @@ session_start();
 
     <!-- Secondary Menu -->
     <div class="bg-primary-light-hover hidden" id="sec-menu">
-        <div class="py-6 px-6 text-sm tracking-wider text-quinary text-center">
-            <a href="">
-                Tentang Kami
-            </a>
-        </div>
         <div class="py-6 px-6 text-sm tracking-wider text-quinary text-center">
             <a href="">
                 Masuk
@@ -135,9 +127,9 @@ session_start();
                     <button id="book-btn" class="tracking-wider text-xs md:text-sm bg-secondary py-4 px-6 rounded-lg text-white hover:bg-secondary-hover hover:duration-200">
                         Pesan Hotel
                     </button>
-                    <a href="">
+                    <a href="cekpembayaran.php">
                         <button class="tracking-wider text-xs md:text-sm text-secondary py-4 px-6 rounded-lg border border-secondary hover:bg-white hover:text-secondary hover:border-white hover:duration-200">
-                            Bantuan
+                            Cek Pembayaran
                         </button>
                     </a>
                 </div>
@@ -244,7 +236,7 @@ session_start();
             <div class="grid grid-cols-2 md:grid-cols-3 gap-10">
 
                 <?php
-                $query = "SELECT * FROM hotel";
+                $query = "SELECT * FROM hotel WHERE status='1'";
                 $result = mysqli_query($conn, $query);
                 while ($data = mysqli_fetch_array($result)) {
                     $getPhoto = mysqli_query($conn, "SELECT * FROM foto WHERE id_hotel = '$data[id_hotel]'");

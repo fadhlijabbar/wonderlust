@@ -2,21 +2,27 @@
 
 include "config/connect.php";
 if (isset($_POST['register'])) {
-    $nama = $_POST['nama'];
-    $email = $_POST['email'];
-    $password = md5($_POST['password']);
-    $password2 = md5($_POST['password2']);
-    if ($password == $password2) {
-        $query = mysqli_query($conn, "INSERT INTO pengguna (nama, email, password, token_reset) VALUES ('$nama', '$email', '$password', 0)");
-        if ($query) {
-            echo "<script>alert('Akun Anda berhasil didaftarkan!');</script>";
-            echo "<script>location='masuk.php';</script>";
+    $checkEmail = mysqli_query($conn, "SELECT * FROM pengguna WHERE email = '$_POST[email]'");
+    if (mysqli_num_rows($checkEmail) == 0) {
+        $nama = $_POST['nama'];
+        $email = $_POST['email'];
+        $password = md5($_POST['password']);
+        $password2 = md5($_POST['password2']);
+        if ($password == $password2) {
+            $query = mysqli_query($conn, "INSERT INTO pengguna (nama, email, password, token_reset) VALUES ('$nama', '$email', '$password', 0)");
+            if ($query) {
+                echo "<script>alert('Akun Anda berhasil didaftarkan!');</script>";
+                echo "<script>location='masuk.php';</script>";
+            } else {
+                echo "<script>alert('Aku Anda gagal didaftarkan!');</script>";
+                echo "<script>location='daftar.php';</script>";
+            }
         } else {
-            echo "<script>alert('Aku Anda gagal didaftarkan!');</script>";
+            echo "<script>alert('Password tidak sama');</script>";
             echo "<script>location='daftar.php';</script>";
         }
     } else {
-        echo "<script>alert('Password tidak sama');</script>";
+        echo "<script>alert('Email sudah terdaftar!');</script>";
         echo "<script>location='daftar.php';</script>";
     }
 }
@@ -49,7 +55,7 @@ if (isset($_POST['register'])) {
         </div>
         <div class="py-20 px-10 md:px-20 xl:px-32 ">
             <div class="font-bold font-playfair-display text-quaternary text-lg text-center mb-14">
-                <a href="../src">
+                <a href="/wonderlust">
                     Wonderlust
                 </a>
             </div>
@@ -78,7 +84,7 @@ if (isset($_POST['register'])) {
             </form>
             <div class="text-sm text-quinary text-center">
                 Sudah mempunyai akun?
-                <a href="masuk.html" class="text-secondary font-bold">Masuk di sini</a>
+                <a href="masuk.php" class="text-secondary font-bold">Masuk di sini</a>
             </div>
         </div>
     </div>

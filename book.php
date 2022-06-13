@@ -2,6 +2,8 @@
 
 include "config/connect.php";
 
+session_start();
+
 ?>
 <!doctype html>
 <html>
@@ -41,18 +43,63 @@ include "config/connect.php";
             </div>
             <!-- End Bars Button -->
 
-            <!-- Menu -->
-            <div class="float-right h-14 hidden md:flex">
-                <div class="self-center text-sm text-quinary cursor-pointer">
-                    Fathoni Zikri Nugroho
-                    <i class="fa-solid fa-circle-user text-quaternary"></i>
+            <?php
+            if (isset($_SESSION['id_pengguna'])) {
+
+            ?>
+                <!-- Menu -->
+                <div class="float-right h-14 hidden md:flex">
+                    <div class="self-center text-sm text-quinary cursor-pointer">
+                        <a href="dashboard.php">
+                            <?php echo $_SESSION['nama']; ?>
+                            <i class="fa-solid fa-circle-user text-quaternary"></i>
+                        </a>
+                    </div>
+                    </a>
                 </div>
-            </div>
-            <!-- End Menu -->
+                <!-- End Menu -->
+            <?php
+            } else {
+            ?>
+                <!-- Menu -->
+                <div class="float-right h-14 hidden md:flex">
+                    <div class="self-center tracking-wider text-sm mx-5 text-quinary">
+                        <a href="masuk.php">
+                            Masuk
+                        </a>
+                    </div>
+                    <a href="daftar.php">
+                        <div class="self-center text-sm mx-5 tracking-wider bg-secondary py-4 px-6 rounded-lg text-white hover:bg-secondary-hover hover:duration-200">
+                            Daftar Sekarang
+                        </div>
+                    </a>
+                </div>
+                <!-- End Menu -->
+
+            <?php
+            }
+            ?>
 
         </div>
     </header>
     <!-- End Header -->
+
+    <!-- Secondary Menu -->
+    <div class="bg-primary-light-hover hidden" id="sec-menu">
+        <div class="py-6 px-6 text-sm tracking-wider text-quinary text-center">
+            <a href="">
+                Masuk
+            </a>
+        </div>
+        <div class="py-4 px-6 text-sm">
+            <a href="">
+                <button class="bg-secondary w-full tracking-wider hover:bg-secondary-hover py-4 px-6 rounded-lg text-white text-center">
+                    Daftar Sekarang
+                </button>
+            </a>
+        </div>
+    </div>
+    <!-- End Secondary Menu -->
 
     <!-- Hotel Detail Content -->
     <!-- <div class="py-14">
@@ -220,30 +267,63 @@ include "config/connect.php";
                                 <div class=" font-bold text-base text-quaternary tracking-wider mb-5">
                                     Informasi Pemesan
                                 </div>
-                                <div class="py-7 px-5 border border-border rounded-md mb-10">
-                                    <div class="mb-5">
-                                        <input type="hidden" name="id" value="<?php echo $_GET['id'] ?>">
-                                        <input type="hidden" name="checkin" value="<?php echo $_GET['checkin'] ?>">
-                                        <input type="hidden" name="checkout" value="<?php echo $_GET['checkout'] ?>">
-                                        <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
-                                            Nama
+                                <?php
+                                if (isset($_SESSION['id_pengguna'])) {
+                                ?>
+                                    <div class="py-7 px-5 border border-border rounded-md mb-10">
+                                        <div class="mb-5">
+                                            <input type="hidden" name="id" value="<?php echo $_GET['id'] ?>">
+                                            <input type="hidden" name="checkin" value="<?php echo $_GET['checkin'] ?>">
+                                            <input type="hidden" name="checkout" value="<?php echo $_GET['checkout'] ?>">
+                                            <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
+                                                Nama
+                                            </div>
+                                            <div>
+                                                <input type="text" readonly value="<?php echo $_SESSION['nama'] ?>" autocomplete="off" required name="nama_pemesan" placeholder="Masukkan nama Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
+                                            </div>
                                         </div>
                                         <div>
-                                            <input type="text" autocomplete="off" required name="nama_pemesan" placeholder="Masukkan nama Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
+                                            <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
+                                                Email
+                                            </div>
+                                            <div>
+                                                <input type="email" readonly value="<?php echo $_SESSION['email'] ?>" autocomplete="off" required name="email_pemesan" placeholder="Masukkan alamat email Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
+                                            </div>
+                                            <div>
+                                                <input type="hidden" name="form_total" value="<?php echo $_GET['form_total'] ?>">
+                                            </div>
                                         </div>
                                     </div>
-                                    <div>
-                                        <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
-                                            Email
+                                <?php
+                                } else {
+                                ?>
+                                    <div class="py-7 px-5 border border-border rounded-md mb-10">
+                                        <div class="mb-5">
+                                            <input type="hidden" name="id" value="<?php echo $_GET['id'] ?>">
+                                            <input type="hidden" name="checkin" value="<?php echo $_GET['checkin'] ?>">
+                                            <input type="hidden" name="checkout" value="<?php echo $_GET['checkout'] ?>">
+                                            <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
+                                                Nama
+                                            </div>
+                                            <div>
+                                                <input type="text" autocomplete="off" required name="nama_pemesan" placeholder="Masukkan nama Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
+                                            </div>
                                         </div>
                                         <div>
-                                            <input type="email" autocomplete="off" required name="email_pemesan" placeholder="Masukkan alamat email Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
-                                        </div>
-                                        <div>
-                                            <input type="hidden" name="form_total" value="<?php echo $_GET['form_total'] ?>">
+                                            <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
+                                                Email
+                                            </div>
+                                            <div>
+                                                <input type="email" autocomplete="off" required name="email_pemesan" placeholder="Masukkan alamat email Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
+                                            </div>
+                                            <div>
+                                                <input type="hidden" name="form_total" value="<?php echo $_GET['form_total'] ?>">
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                <?php
+                                }
+                                ?>
                                 <div class=" font-bold text-base text-quaternary tracking-wider mb-5">
                                     Rincian Biaya
                                 </div>
@@ -265,21 +345,24 @@ include "config/connect.php";
                                     for ($i = 1; $i <= $form_total; $i++) {
                                         ${"id_kamar" . $i} = $_GET['id_kamar' . $i];
                                         $getRoom = mysqli_query($conn, "SELECT * FROM kamar WHERE id_kamar='${"id_kamar" .$i}'");
-                                        $dataRoom = mysqli_fetch_array($getRoom);
-                                        $hargaperkamar = $dataRoom['harga'] * $jumlah_hari;
+                                        if (mysqli_num_rows($getRoom) > 0) {
+                                            $dataRoom = mysqli_fetch_array($getRoom);
+                                            $hargaperkamar = $dataRoom['harga'] * $jumlah_hari;
                                     ?>
-                                        <div class="p-5 border border-border rounded-md text-sm text-quaternary mb-2">
-                                            <div class="float-left">
-                                                (1x) <?php echo $dataRoom['jenis'] ?> (<?php echo $jumlah_hari ?> malam)
+                                            <div class="p-5 border border-border rounded-md text-sm text-quaternary mb-2">
+                                                <div class="float-left">
+                                                    (1x) <?php echo $dataRoom['jenis'] ?> (<?php echo $jumlah_hari ?> malam)
+                                                </div>
+                                                <div class="float-right">
+                                                    Rp<?php echo number_format($hargaperkamar, 2, '.', ','); ?>
+                                                </div>
+                                                <input type="hidden" name="<?php echo "id_kamar" . $i ?>" value="<?php echo $_GET['id_kamar' . $i]; ?>">
+                                                <div class="clear-both"></div>
                                             </div>
-                                            <div class="float-right">
-                                                Rp<?php echo number_format($hargaperkamar, 2, '.', ','); ?>
-                                            </div>
-                                            <input type="hidden" name="<?php echo "id_kamar" . $i ?>" value="<?php echo $_GET['id_kamar' . $i]; ?>">
-                                            <div class="clear-both"></div>
-                                        </div>
                                     <?php
-                                        $harga += $hargaperkamar;
+                                            $harga += $hargaperkamar;
+                                        } else {
+                                        }
                                     }
                                     ?>
                                     <div class="p-5 border border-border rounded-md text-sm text-quaternary mb-2">
@@ -319,35 +402,38 @@ include "config/connect.php";
                                 for ($i = 1; $i <= $form_total; $i++) {
                                     ${"id_kamar" . $i} = $_GET['id_kamar' . $i];
                                     $getRoom = mysqli_query($conn, "SELECT * FROM kamar WHERE id_kamar='${"id_kamar" .$i}'");
-                                    $dataRoom = mysqli_fetch_array($getRoom);
+                                    if (mysqli_num_rows($getRoom) > 0) {
+                                        $dataRoom = mysqli_fetch_array($getRoom);
                                 ?>
-                                    <div class="border border-border rounded-md p-5 mb-5">
-                                        <div>
-                                            <div class="w-20 h-20 bg-slate-200 rounded-md float-left mr-5"></div>
-                                            <div class="float-left">
-                                                <div class="text-sm font-bold text-quaternary mb-1">
-                                                    (1x) <?php echo $dataRoom['nama_kamar'] ?>
-                                                </div>
-                                                <div class="text-quinary">
-                                                    <div class="text-sm float-left mr-3">
-                                                        <i class="fa-solid fa-bed"></i>
-                                                        <?php echo $dataRoom['jenis'] ?> Single Bed
+                                        <div class="border border-border rounded-md p-5 mb-5">
+                                            <div>
+                                                <div class="w-20 h-20 bg-slate-200 rounded-md float-left mr-5"></div>
+                                                <div class="float-left">
+                                                    <div class="text-sm font-bold text-quaternary mb-1">
+                                                        (1x) <?php echo $dataRoom['nama_kamar'] ?>
                                                     </div>
-                                                    <div class="text-sm float-left">
-                                                        <i class="fa-solid fa-person"></i>
-                                                        <?php echo $dataRoom['kapasitas'] ?> Tamu
+                                                    <div class="text-quinary">
+                                                        <div class="text-sm float-left mr-3">
+                                                            <i class="fa-solid fa-bed"></i>
+                                                            <?php echo $dataRoom['jenis'] ?> Single Bed
+                                                        </div>
+                                                        <div class="text-sm float-left">
+                                                            <i class="fa-solid fa-person"></i>
+                                                            <?php echo $dataRoom['kapasitas'] ?> Tamu
+                                                        </div>
+                                                        <div class="clear-both"></div>
                                                     </div>
-                                                    <div class="clear-both"></div>
+                                                    <div class="text-sm text-secondary font-bold">
+                                                        <i class="fa-solid fa-money-bill"></i>
+                                                        Rp<?php echo number_format($dataRoom['harga'], 2, '.', ','); ?>
+                                                    </div>
                                                 </div>
-                                                <div class="text-sm text-secondary font-bold">
-                                                    <i class="fa-solid fa-money-bill"></i>
-                                                    Rp<?php echo number_format($dataRoom['harga'], 2, '.', ','); ?>
-                                                </div>
+                                                <div class="clear-both"></div>
                                             </div>
-                                            <div class="clear-both"></div>
                                         </div>
-                                    </div>
                                 <?php
+                                    } else {
+                                    }
                                 }
                                 ?>
 

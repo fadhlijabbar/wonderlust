@@ -2,6 +2,72 @@
 
 include "config/connect.php";
 
+session_start();
+
+if (isset($_SESSION['id_pengguna'])) {
+    if (isset($_POST['insert'])) {
+        $id_pengguna = $_SESSION['id_pengguna'];
+        $nama_pengguna = $_SESSION['nama'];
+        $email = $_SESSION['email'];
+        $id_hotel = $_POST['id'];
+        $checkin = $_POST['checkin'];
+        $checkout = $_POST['checkout'];
+        $getTamu = mysqli_query($conn, "SELECT * FROM tamu WHERE email = '$email'");
+        $tamu = mysqli_fetch_assoc($getTamu);
+        $id_tamu = $tamu['id_tamu'];
+        $addBooking = mysqli_query($conn, "INSERT INTO transaksi (id_hotel, checkin, checkout, id_pengguna, id_tamu) VALUES ('$id_hotel', '$checkin', '$checkout', '$id_pengguna', 0)");
+        $getBooking = mysqli_query($conn, "SELECT * FROM transaksi WHERE id_tamu = '$id_tamu' ORDER BY id_transaksi DESC LIMIT 1");
+        $transaksi = mysqli_fetch_assoc($getBooking);
+        $id_transaksi = $transaksi['id_transaksi'];
+        for ($i = 1; $i <= $_POST['form_total']; $i++) {
+            if (isset($_POST['id_kamar' . $i])) {
+                ${"id_kamar" . $i} = $_POST['id_kamar' . $i];
+                $addDetailTransaksi = mysqli_query($conn, "INSERT INTO detail_transaksi (id_transaksi, id_hotel, id_kamar) VALUES ('$id_transaksi', '$id_hotel', '${'id_kamar' .$i}')");
+            } else {
+            }
+        }
+        $total = $_POST['total'];
+        $now = date("Ymd");
+        $kode_pembayaran = $now . $id_transaksi . $id_tamu;
+        $kadaluarsa = date("Y-m-d", strtotime($now . "+1 day"));
+        $status = "Menunggu Pembayaran";
+        $addPembayaran = mysqli_query($conn, "INSERT INTO pembayaran (id_transaksi, total, kode_pembayaran, tanggal, kadaluarsa, bukti, status) VALUES ('$id_transaksi', '$total', '$kode_pembayaran', NOW(),'$kadaluarsa', '', '$status')");
+        header("Location: payment.php?kode_pembayaran=$kode_pembayaran");
+    }
+} else {
+    if (isset($_POST['insert'])) {
+        $nama_tamu = $_POST['nama_pemesan'];
+        $email = $_POST['email_pemesan'];
+        $addGuest = mysqli_query($conn, "INSERT INTO tamu (nama_tamu, email) VALUES ('$nama_tamu', '$email')");
+        if ($addGuest) {
+            $id_hotel = $_POST['id'];
+            $checkin = $_POST['checkin'];
+            $checkout = $_POST['checkout'];
+            $getTamu = mysqli_query($conn, "SELECT * FROM tamu WHERE email = '$email'");
+            $tamu = mysqli_fetch_assoc($getTamu);
+            $id_tamu = $tamu['id_tamu'];
+            $addBooking = mysqli_query($conn, "INSERT INTO transaksi (id_hotel, checkin, checkout, id_pengguna, id_tamu) VALUES ('$id_hotel', '$checkin', '$checkout', 0, '$id_tamu')");
+            $getBooking = mysqli_query($conn, "SELECT * FROM transaksi WHERE id_tamu = '$id_tamu' ORDER BY id_transaksi DESC LIMIT 1");
+            $transaksi = mysqli_fetch_assoc($getBooking);
+            $id_transaksi = $transaksi['id_transaksi'];
+            for ($i = 1; $i <= $_POST['form_total']; $i++) {
+                if (isset($_POST['id_kamar' . $i])) {
+                    ${"id_kamar" . $i} = $_POST['id_kamar' . $i];
+                    $addDetailTransaksi = mysqli_query($conn, "INSERT INTO detail_transaksi (id_transaksi, id_hotel, id_kamar) VALUES ('$id_transaksi', '$id_hotel', '${'id_kamar' .$i}')");
+                } else {
+                }
+            }
+            $total = $_POST['total'];
+            $now = date("Ymd");
+            $kode_pembayaran = $now . $id_transaksi . $id_tamu;
+            $kadaluarsa = date("Y-m-d", strtotime($now . "+1 day"));
+            $status = "Menunggu Pembayaran";
+            $addPembayaran = mysqli_query($conn, "INSERT INTO pembayaran (id_transaksi, total, kode_pembayaran, tanggal, kadaluarsa, bukti, status) VALUES ('$id_transaksi', '$total', '$kode_pembayaran', NOW(),'$kadaluarsa', '', '$status')");
+        }
+        header("Location: payment.php?kode_pembayaran=$kode_pembayaran");
+    }
+}
+
 ?>
 <!doctype html>
 <html>
@@ -28,7 +94,9 @@ include "config/connect.php";
             <!-- Logo Name -->
             <div class="flex float-left h-14">
                 <div class="font-playfair-display self-center text-base font-bold text-quaternary">
-                    Wonderlust
+                    <a href="/wonderlust">
+                        Wonderlust
+                    </a>
                 </div>
             </div>
             <!-- End Logo Name -->
@@ -41,334 +109,64 @@ include "config/connect.php";
             </div>
             <!-- End Bars Button -->
 
-            <!-- Menu -->
-            <div class="float-right h-14 hidden md:flex">
-                <div class="self-center text-sm text-quinary cursor-pointer">
-                    Fathoni Zikri Nugroho
-                    <i class="fa-solid fa-circle-user text-quaternary"></i>
+            <?php
+            if (isset($_SESSION['id_pengguna'])) {
+
+            ?>
+                <!-- Menu -->
+                <div class="float-right h-14 hidden md:flex">
+                    <div class="self-center text-sm text-quinary cursor-pointer">
+                        <a href="dashboard.php">
+                            <?php echo $_SESSION['nama']; ?>
+                            <i class="fa-solid fa-circle-user text-quaternary"></i>
+                        </a>
+                    </div>
+                    </a>
                 </div>
-            </div>
-            <!-- End Menu -->
+                <!-- End Menu -->
+            <?php
+            } else {
+            ?>
+                <!-- Menu -->
+                <div class="float-right h-14 hidden md:flex">
+                    <div class="self-center tracking-wider text-sm mx-5 text-quinary">
+                        <a href="masuk.php">
+                            Masuk
+                        </a>
+                    </div>
+                    <a href="daftar.php">
+                        <div class="self-center text-sm mx-5 tracking-wider bg-secondary py-4 px-6 rounded-lg text-white hover:bg-secondary-hover hover:duration-200">
+                            Daftar Sekarang
+                        </div>
+                    </a>
+                </div>
+                <!-- End Menu -->
+
+            <?php
+            }
+            ?>
 
         </div>
     </header>
     <!-- End Header -->
 
-    <!-- Hotel Detail Content -->
-    <!-- <div class="py-14">
-        <div class="w-full">
-            <div class="container mx-auto px-6">
-                <div class="w-full h-40 bg-slate-200 mb-5 rounded-md"></div>
-                <div class="pb-5 border-b border-border mb-10">
-                    <div class="float-left">
-                        <div class="text-base font-bold text-quaternary mb-1  tracking-wider">
-                            Hotel Seruni
-                        </div>
-                        <div class="text-sm text-quinary tracking-wider">
-                            <i class="fa-solid fa-location-dot"></i>
-                            Bogor, Jawa Barat
-                        </div>
-                        <div class="text-sm text-secondary font-bold tracking-wider">
-                            <i class="fa-solid fa-money-bill"></i>
-                            Rp10,000,000
-                        </div>
-                    </div>
-                    <div class="float-right">
-                        <div class="bg-primary p-3 rounded-md text-white">
-                            <i class="fa-solid fa-star"></i>
-                            5
-                        </div>
-                    </div>
-                    <div class="clear-both"></div>
-                </div>
-                <div>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
-                        <div>
-                            <div class="text-sm text-quinary mb-10">
-                                It is a long established fact that a reader will be distracted by the readable content
-                                of a
-                                page
-                                when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less
-                                normal
-                                distribution of letters, as opposed to using 'Content here, content here', making it
-                                look
-                                like
-                                readable English. Many desktop publishing packages and web page editors now use Lorem
-                                Ipsum
-                                as
-                                their default model text, and a search for 'lorem ipsum' will uncover many web sites
-                                still
-                                in
-                                their infancy. Various versions have evolved over the years, sometimes by accident,
-                                sometimes on
-                                purpose (injected humour and the like).
-                            </div>
-                            <div class="mb-10">
-                                <div class="text-base font-bold text-quaternary tracking-wider">
-                                    Fasilitas
-                                </div>
-                                <div>
-                                    Fasilitas
-                                </div>
-                            </div>
-                            <div>
-                                <div class="text-base font-bold text-quaternary tracking-wider">
-                                    Lokasi
-                                </div>
-                                <div class="text-sm text-quinary">
-                                    Jalan Pirus Kp Baru Tegal Desa Cibeureum, Cisarua- Bogor, Cisarua, Puncak, Jawa
-                                    Barat, Indonesia, 16750
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="py-7 px-5 border border-border rounded-md">
-                                <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
-                                    Pilih Kamar
-                                </div>
-                                <div class="border border-border rounded-md p-5 cursor-pointer mb-5">
-                                    <div>
-                                        <div class="w-20 h-20 bg-slate-200 rounded-md float-left mr-5"></div>
-                                        <div class="float-left">
-                                            <div class="text-sm font-bold text-quaternary mb-1">
-                                                Single Bed Room
-                                            </div>
-                                            <div class="text-quinary">
-                                                <div class="text-sm float-left mr-3">
-                                                    <i class="fa-solid fa-bed"></i>
-                                                    1 Single Bed
-                                                </div>
-                                                <div class="text-sm float-left">
-                                                    <i class="fa-solid fa-person"></i>
-                                                    1 Tamu
-                                                </div>
-                                                <div class="clear-both"></div>
-                                            </div>
-                                            <div class="text-sm text-secondary font-bold">
-                                                <i class="fa-solid fa-money-bill"></i>
-                                                Rp10,000,000
-                                            </div>
-                                        </div>
-                                        <div class="float-right">
-                                            <div class="text-sm text-primary">
-                                                Tersedia 1 kamar
-                                            </div>
-                                        </div>
-                                        <div class="clear-both"></div>
-                                    </div>
-                                </div>
-                                <div class="border border-border rounded-md p-5 cursor-pointer mb-5">
-                                    <div>
-                                        <div class="w-20 h-20 bg-slate-200 rounded-md float-left mr-5"></div>
-                                        <div class="float-left">
-                                            <div class="text-sm font-bold text-quaternary mb-1">
-                                                Single Bed Room
-                                            </div>
-                                            <div class="text-quinary">
-                                                <div class="text-sm float-left mr-3">
-                                                    <i class="fa-solid fa-bed"></i>
-                                                    1 Single Bed
-                                                </div>
-                                                <div class="text-sm float-left">
-                                                    <i class="fa-solid fa-person"></i>
-                                                    1 Tamu
-                                                </div>
-                                                <div class="clear-both"></div>
-                                            </div>
-                                            <div class="text-sm text-secondary font-bold">
-                                                <i class="fa-solid fa-money-bill"></i>
-                                                Rp10,000,000
-                                            </div>
-                                        </div>
-                                        <div class="float-right">
-                                            <div class="text-sm text-primary">
-                                                Tersedia 1 kamar
-                                            </div>
-                                        </div>
-                                        <div class="clear-both"></div>
-                                    </div>
-                                </div>
-                                <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
-                                    Pilih Jadwal
-                                </div>
-                                <div class="grid grid-cols-2 gap-5 mb-5">
-                                    <div>
-                                        <input type="text" placeholder="Masukkan kata sandi Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
-                                    </div>
-                                    <div>
-                                        <input type="text" placeholder="Masukkan kata sandi Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
-                                    </div>
-                                </div>
-                                <input type="submit" value="Pesan Sekarang" class="w-full inline tracking-wider bg-secondary py-4 text-sm rounded-md text-white hover:bg-secondary-hover cursor-pointer">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+    <!-- Secondary Menu -->
+    <div class="bg-primary-light-hover hidden" id="sec-menu">
+        <div class="py-6 px-6 text-sm tracking-wider text-quinary text-center">
+            <a href="">
+                Masuk
+            </a>
         </div>
-    </div> -->
-    <!-- End Hotel Detail Content -->
-
-    <!-- Book Detail Content -->
-    <!-- <div class="py-14">
-        <div class="w-full">
-            <div class="container mx-auto px-6">
-                <div>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
-                        <div>
-                            <form action="" method="POST">
-                                <div class=" font-bold text-base text-quaternary tracking-wider mb-5">
-                                    Informasi Pemesan
-                                </div>
-                                <div class="py-7 px-5 border border-border rounded-md mb-10">
-                                    <div class="mb-5">
-                                        <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
-                                            Nama
-                                        </div>
-                                        <div>
-                                            <input type="text" name="nama_pemesan" placeholder="Masukkan nama Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
-                                            Email
-                                        </div>
-                                        <div>
-                                            <input type="text" name="email_pemesan" placeholder="Masukkan alamat email Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class=" font-bold text-base text-quaternary tracking-wider mb-5">
-                                    Rincian Biaya
-                                </div>
-                                <div class="py-7 px-5 border border-border rounded-md mb-10">
-                                    <?php
-
-                                    $checkin = $_GET['checkin'];
-                                    $checkout = $_GET['checkout'];
-
-                                    $checkinNew = strtotime($checkin);
-                                    $checkoutNew = strtotime($checkout);
-
-                                    $jumlah_hari = ($checkoutNew - $checkinNew) / (60 * 60 * 24);
-
-                                    $query = mysqli_query($conn, "SELECT * FROM hotel WHERE id_hotel='$_GET[id]'");
-                                    $data = mysqli_fetch_array($query);
-                                    $form_total = $_GET['form_total'];
-                                    $harga = 0;
-                                    for ($i = 1; $i <= $form_total; $i++) {
-                                        ${"id_kamar" . $i} = $_GET['id_kamar' . $i];
-                                        $getRoom = mysqli_query($conn, "SELECT * FROM kamar WHERE id_kamar='${"id_kamar" .$i}'");
-                                        $dataRoom = mysqli_fetch_array($getRoom);
-                                        $hargaperkamar = $dataRoom['harga'] * $jumlah_hari;
-                                    ?>
-                                        <div class="p-5 border border-border rounded-md text-sm text-quaternary mb-2">
-                                            <div class="float-left">
-                                                (1x) <?php echo $dataRoom['jenis'] ?> (<?php echo $jumlah_hari ?> malam)
-                                            </div>
-                                            <div class="float-right">
-                                                Rp<?php echo number_format($hargaperkamar, 2, '.', ','); ?>
-                                            </div>
-                                            <div class="clear-both"></div>
-                                        </div>
-                                    <?php
-                                        $harga += $hargaperkamar;
-                                    }
-                                    ?>
-                                    <div class="p-5 border border-border rounded-md text-sm text-quaternary mb-2">
-                                        <div class="float-left">
-                                            PPN 11%
-                                        </div>
-                                        <div class="float-right">
-                                            <?php
-                                            $ppn = $harga * 0.11;
-                                            echo "Rp" . number_format($ppn, 2, '.', ',');
-                                            ?>
-                                        </div>
-                                        <div class="clear-both"></div>
-                                    </div>
-                                    <div class="p-5 border border-border rounded-md text-sm text-quaternary font-bold">
-                                        <div class="float-left">
-                                            Total
-                                        </div>
-                                        <div class="float-right">
-                                            <?php
-                                            $totalharga = $harga + $ppn;
-                                            echo "Rp" . number_format($totalharga, 2, '.', ',');
-                                            ?>
-                                        </div>
-                                        <div class="clear-both"></div>
-                                    </div>
-                                </div>
-                                <input type="submit" value="Lanjutkan" class="tracking-wider bg-secondary py-4 px-6 text-sm rounded-md text-white hover:bg-secondary-hover hover:duration-200 cursor-pointer">
-                            </form>
-                        </div>
-                        <div>
-                            <div class="py-7 px-5 border border-border rounded-md">
-                                <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
-                                    <?php echo $data['nama_hotel']; ?>
-                                </div>
-                                <?php
-                                for ($i = 1; $i <= $form_total; $i++) {
-                                    ${"id_kamar" . $i} = $_GET['id_kamar' . $i];
-                                    $getRoom = mysqli_query($conn, "SELECT * FROM kamar WHERE id_kamar='${"id_kamar" .$i}'");
-                                    $dataRoom = mysqli_fetch_array($getRoom);
-                                ?>
-                                    <div class="border border-border rounded-md p-5 mb-5">
-                                        <div>
-                                            <div class="w-20 h-20 bg-slate-200 rounded-md float-left mr-5"></div>
-                                            <div class="float-left">
-                                                <div class="text-sm font-bold text-quaternary mb-1">
-                                                    (1x) <?php echo $dataRoom['nama_kamar'] ?>
-                                                </div>
-                                                <div class="text-quinary">
-                                                    <div class="text-sm float-left mr-3">
-                                                        <i class="fa-solid fa-bed"></i>
-                                                        <?php echo $dataRoom['jenis'] ?> Single Bed
-                                                    </div>
-                                                    <div class="text-sm float-left">
-                                                        <i class="fa-solid fa-person"></i>
-                                                        <?php echo $dataRoom['kapasitas'] ?> Tamu
-                                                    </div>
-                                                    <div class="clear-both"></div>
-                                                </div>
-                                                <div class="text-sm text-secondary font-bold">
-                                                    <i class="fa-solid fa-money-bill"></i>
-                                                    Rp<?php echo number_format($dataRoom['harga'], 2, '.', ','); ?>
-                                                </div>
-                                            </div>
-                                            <div class="clear-both"></div>
-                                        </div>
-                                    </div>
-                                <?php
-                                }
-                                ?>
-
-                                <div class="grid grid-cols-2 gap-5 mb-5">
-                                    <div>
-                                        <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
-                                            Check In <div class="font-normal inline-block">(Mulai 09:00)</div>
-                                        </div>
-                                        <input type="date" disabled value="<?php echo $_GET['checkin'] ?>" placeholder="Masukkan kata sandi Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
-                                    </div>
-                                    <div>
-                                        <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
-                                            Check Out <div class="font-normal inline-block">(Sebelum 15:00)</div>
-                                        </div>
-                                        <input type="date" disabled value="<?php echo $_GET['checkout'] ?>" placeholder="Masukkan kata sandi Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
-                                    </div>
-                                </div>
-                                <div class="text-sm text-quinary">
-                                    Perhatikan jadwal check in dan check out dengan benar!
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="py-4 px-6 text-sm">
+            <a href="">
+                <button class="bg-secondary w-full tracking-wider hover:bg-secondary-hover py-4 px-6 rounded-lg text-white text-center">
+                    Daftar Sekarang
+                </button>
+            </a>
         </div>
-    </div> -->
-    <!-- End Book Detail Content -->
+    </div>
+    <!-- End Secondary Menu -->
 
     <!-- Book Review -->
     <div class="py-14">
@@ -392,7 +190,10 @@ include "config/connect.php";
                                     $getPhoto = mysqli_query($conn, "SELECT * FROM foto WHERE id_hotel='$id_hotel'");
                                     $dataPhoto = mysqli_fetch_array($getPhoto);
                                     ?>
+                                    <input type="hidden" name="insert">
                                     <input type="hidden" name="id" value="<?php echo $id_hotel; ?>">
+                                    <input type="hidden" name="nama_pemesan" value="<?php echo $_POST['nama_pemesan'] ?>">
+                                    <input type="hidden" name="email_pemesan" value="<?php echo $_POST['email_pemesan'] ?>">
                                     <input type="hidden" name="checkin" value="<?php echo $_POST['checkin']; ?>">
                                     <input type="hidden" name="checkout" value="<?php echo $_POST['checkout']; ?>">
                                     <input type="hidden" name="form_total" value="<?php echo $_POST['form_total']; ?>">
@@ -458,34 +259,40 @@ include "config/connect.php";
                                         $form_total = $_POST['form_total'];
                                         $harga = 0;
                                         for ($i = 1; $i <= $form_total; $i++) {
-                                            ${"id_kamar" . $i} = $_POST['id_kamar' . $i];
+                                            if (isset($_POST['id_kamar' . $i])) {
+                                                ${"id_kamar" . $i} = $_POST['id_kamar' . $i];
+                                            } else {
+                                                ${"id_kamar" . $i} = "";
+                                            }
                                             $getRoom = mysqli_query($conn, "SELECT * FROM kamar WHERE id_kamar='${"id_kamar" .$i}'");
-                                            $dataRoom = mysqli_fetch_array($getRoom);
-                                            $hargaperkamar = $dataRoom['harga'] * $jumlah_hari;
+                                            if (mysqli_num_rows($getRoom) > 0) {
+                                                $dataRoom = mysqli_fetch_array($getRoom);
+                                                $hargaperkamar = $dataRoom['harga'] * $jumlah_hari;
                                         ?>
-                                            <div class="<?php if ($i != $form_total) {
-                                                            echo "mb-5";
-                                                        } ?>">
-                                                <div class="w-20 h-20 bg-slate-200 rounded-md float-left mr-5"></div>
-                                                <div class="float-left">
-                                                    <div class="text-sm font-bold text-quaternary mb-1">
-                                                        (1x) <?php echo $dataRoom['nama_kamar'] ?>
-                                                    </div>
-                                                    <div class="text-quinary">
-                                                        <div class="text-sm mr-3">
-                                                            <i class="fa-solid fa-bed"></i>
-                                                            <?php echo $dataRoom['jenis'] ?>
+                                                <div class="<?php if ($i != $form_total) {
+                                                                echo "mb-5";
+                                                            } ?>">
+                                                    <div class="w-20 h-20 bg-slate-200 rounded-md float-left mr-5"></div>
+                                                    <div class="float-left">
+                                                        <div class="text-sm font-bold text-quaternary mb-1">
+                                                            (1x) <?php echo $dataRoom['nama_kamar'] ?>
                                                         </div>
-                                                        <div class="text-sm">
-                                                            <i class="fa-solid fa-person"></i>
-                                                            <?php echo $dataRoom['kapasitas'] ?> Tamu
+                                                        <div class="text-quinary">
+                                                            <div class="text-sm mr-3">
+                                                                <i class="fa-solid fa-bed"></i>
+                                                                <?php echo $dataRoom['jenis'] ?>
+                                                            </div>
+                                                            <div class="text-sm">
+                                                                <i class="fa-solid fa-person"></i>
+                                                                <?php echo $dataRoom['kapasitas'] ?> Tamu
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                    <div class="clear-both"></div>
                                                 </div>
-                                                <div class="clear-both"></div>
-                                                <input type="hidden" name="<?php echo "id_kamar" . $i ?>" value="<?php echo ${"id_kamar" . $i} ?>">
-                                            </div>
                                         <?php
+                                            } else {
+                                            }
                                         }
                                         ?>
                                     </div>
@@ -509,23 +316,30 @@ include "config/connect.php";
                                     $form_total = $_POST['form_total'];
                                     $harga = 0;
                                     for ($i = 1; $i <= $form_total; $i++) {
-                                        ${"id_kamar" . $i} = $_POST['id_kamar' . $i];
+                                        if (isset($_POST['id_kamar' . $i])) {
+                                            ${"id_kamar" . $i} = $_POST['id_kamar' . $i];
+                                        } else {
+                                            ${"id_kamar" . $i} = "";
+                                        }
                                         $getRoom = mysqli_query($conn, "SELECT * FROM kamar WHERE id_kamar='${"id_kamar" .$i}'");
-                                        $dataRoom = mysqli_fetch_array($getRoom);
-                                        $hargaperkamar = $dataRoom['harga'] * $jumlah_hari;
+                                        if (mysqli_num_rows($getRoom) > 0) {
+                                            $dataRoom = mysqli_fetch_array($getRoom);
+                                            $hargaperkamar = $dataRoom['harga'] * $jumlah_hari;
                                     ?>
-                                        <div class="p-5 border border-border rounded-md text-sm text-quaternary mb-2">
-                                            <div class="float-left">
-                                                (1x) <?php echo $dataRoom['jenis'] ?> (<?php echo $jumlah_hari ?> malam)
+                                            <div class="p-5 border border-border rounded-md text-sm text-quaternary mb-2">
+                                                <div class="float-left">
+                                                    (1x) <?php echo $dataRoom['jenis'] ?> (<?php echo $jumlah_hari ?> malam)
+                                                </div>
+                                                <div class="float-right">
+                                                    Rp<?php echo number_format($hargaperkamar, 2, '.', ','); ?>
+                                                </div>
+                                                <input type="hidden" name="<?php echo "id_kamar" . $i ?>" value="<?php echo $_POST['id_kamar' . $i]; ?>">
+                                                <div class="clear-both"></div>
                                             </div>
-                                            <div class="float-right">
-                                                Rp<?php echo number_format($hargaperkamar, 2, '.', ','); ?>
-                                            </div>
-                                            <input type="hidden" name="<?php echo "id_kamar" . $i ?>" value="<?php echo $_POST['id_kamar' . $i]; ?>">
-                                            <div class="clear-both"></div>
-                                        </div>
                                     <?php
-                                        $harga += $hargaperkamar;
+                                            $harga += $hargaperkamar;
+                                        } else {
+                                        }
                                     }
                                     ?>
                                     <div class="p-5 border border-border rounded-md text-sm text-quaternary mb-2">
@@ -553,6 +367,7 @@ include "config/connect.php";
                                         <div class="clear-both"></div>
                                     </div>
                                 </div>
+                                <input type="hidden" name="total" value="<?php echo $totalharga; ?>">
                                 <input type="submit" value="Konfirmasi dan Lanjutkan Pembayaran" class="tracking-wider bg-secondary py-4 px-6 text-sm rounded-md text-white hover:bg-secondary-hover hover:duration-200 cursor-pointer">
                             </form>
                         </div>
@@ -585,272 +400,6 @@ include "config/connect.php";
         </div>
     </div>
     <!-- End Book Review -->
-
-    <!-- Payment -->
-    <!-- <div class="py-14">
-        <div class="w-full">
-            <div class="container mx-auto px-6">
-                <div>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
-                        <div>
-                            <div class=" font-bold text-base text-quaternary tracking-wider mb-1">
-                                Pembayaran
-                            </div>
-                            <div class=" text-sm text-quinary tracking-wider  mb-5">
-                                Silakan melakukan pembayaran sesuai instruksi yang tertera di bawah ini.
-                            </div>
-                            <div class="py-7 px-5 border border-border rounded-md mb-10">
-                                <div class="mb-5">
-                                    <div class="text-sm text-quinary tracking-wider">
-                                        ID Pesanan
-                                    </div>
-                                    <div class="text-sm font-bold text-quaternary tracking-wider">
-                                        A0001
-                                    </div>
-                                </div>
-                                <div class="mb-5">
-                                    <div class="text-sm text-quinary tracking-wider">
-                                        Rincian Pesanan
-                                    </div>
-                                    <div class="text-sm font-bold text-quaternary tracking-wider">
-                                        Hotel Seruni
-                                    </div>
-                                    <div class="text-sm text-quaternary tracking-wider">
-                                        (1x) Single Bed Room (3 malam)
-                                    </div>
-                                </div>
-                                <div class="">
-                                    <div class="text-sm text-quinary tracking-wider">
-                                        Tamu
-                                    </div>
-                                    <div class="text-sm font-bold text-quaternary tracking-wider">
-                                        Fathoni Zikri Nugroho
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="py-7 px-5 border border-border rounded-md mb-10">
-                                <div class="mb-5">
-                                    <div class="text-sm font-bold text-quinary tracking-wider">
-                                        Total yang harus dibayarkan
-                                    </div>
-                                    <div class="text-base font-bold text-quaternary tracking-wider">
-                                        Rp1,110,000
-                                    </div>
-                                    <div class="text-sm text-quinary tracking-wider">
-                                        Sebelum 28 April 2022 05:00
-                                    </div>
-                                </div>
-                                <div class="mb-5">
-                                    <div class="text-sm font-bold text-quinary tracking-wider">
-                                        Kode Pembayaran
-                                    </div>
-                                    <div class="text-base font-bold text-quaternary tracking-wider">
-                                        AB0001
-                                    </div>
-                                </div>
-                                <div class="mb-5">
-                                    <div class="text-sm font-bold text-quinary tracking-wider">
-                                        Status Pembayaran
-                                    </div>
-                                    <div class="text-base font-bold text-secondary tracking-wider">
-                                        Menunggu Pembayaran
-                                    </div>
-                                </div>
-                                <button
-                                    class="tracking-wider bg-secondary py-4 px-6 text-sm rounded-md text-white hover:bg-secondary-hover hover:duration-200 cursor-pointer">Unduh
-                                    Tagihan</button>
-                            </div>
-                            <div class=" font-bold text-base text-quaternary tracking-wider mb-1">
-                                Instruksi Pembayaran
-                            </div>
-                            <div class=" text-sm text-quinary tracking-wider mb-5">
-                                Anda dapat melakukan transaksi dengan menggunakan bank yang tertera di bawah. Silaka
-                                lakukan transfer sesuai <b>Total yang harus dibayar</b>.
-                            </div>
-                            <div>
-                                <div class="mb-5">
-                                    <div>
-                                        <img src="assets/img/BNI.svg" alt="" class="float-left mr-5">
-                                    </div>
-                                    <div class="float-left">
-                                        <div class="text-sm font-bold text-quaternary tracking-wider">
-                                            Bank Negara Indonesia (BNI)
-                                        </div>
-                                        <div class="text-sm text-quinary tracking-wider">
-                                            No. Rekening : 123456789
-                                        </div>
-                                        <div class="text-sm text-quinary tracking-wider">
-                                            Wonderlust Indonesia
-                                        </div>
-                                    </div>
-                                    <div class="clear-both"></div>
-                                </div>
-                                <div class="mb-5">
-                                    <div>
-                                        <img src="assets/img/BRI.svg" alt="" class="float-left mr-5">
-                                    </div>
-                                    <div class="float-left">
-                                        <div class="text-sm font-bold text-quaternary tracking-wider">
-                                            Bank Rakyat Indonesia (BRI)
-                                        </div>
-                                        <div class="text-sm text-quinary tracking-wider">
-                                            No. Rekening : 123456789
-                                        </div>
-                                        <div class="text-sm text-quinary tracking-wider">
-                                            Wonderlust Indonesia
-                                        </div>
-                                    </div>
-                                    <div class="clear-both"></div>
-                                </div>
-                                <div class="">
-                                    <div>
-                                        <img src="assets/img/BCA.svg" alt="" class="float-left mr-5">
-                                    </div>
-                                    <div class="float-left">
-                                        <div class="text-sm font-bold text-quaternary tracking-wider">
-                                            Bank Central Asia (BCA)
-                                        </div>
-                                        <div class="text-sm text-quinary tracking-wider">
-                                            No. Rekening : 123456789
-                                        </div>
-                                        <div class="text-sm text-quinary tracking-wider">
-                                            Wonderlust Indonesia
-                                        </div>
-                                    </div>
-                                    <div class="clear-both"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class=" font-bold text-base text-quaternary tracking-wider mb-5">
-                                Konfirmasi Pembayaran
-                            </div>
-                            <div class="py-7 px-5 border border-border rounded-md mb-10">
-                                <div class="mb-5">
-                                    <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
-                                        Bukti Pembayaran
-                                    </div>
-                                    <input type="text" placeholder="Masukkan kata sandi Anda"
-                                        class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
-                                </div>
-                                <div class="mb-5">
-                                    <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
-                                        Kode Pembayaran
-                                    </div>
-                                    <input type="text" placeholder="Masukkan kata sandi Anda"
-                                        class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
-                                </div>
-                                <div class="mb-5">
-                                    <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
-                                        Nama Pengirim
-                                    </div>
-                                    <input type="text" placeholder="Masukkan kata sandi Anda"
-                                        class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
-                                </div>
-                                <input type="submit" value="Konfirmasi"
-                                    class="w-full inline tracking-wider bg-secondary py-4 text-sm rounded-md text-white hover:bg-secondary-hover hover:duration-200 cursor-pointer mb-2">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
-    <!-- End Payment -->
-
-    <!-- Payment Check -->
-    <!-- <div class="py-14">
-        <div class="w-full">
-            <div class="container mx-auto px-6">
-                <div>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
-                        <div>
-                            <div class=" font-bold text-base text-quaternary tracking-wider mb-1">
-                                Cek Pembayaran
-                            </div>
-                            <div class=" text-sm text-quinary tracking-wider  mb-5">
-                                Silakan masukkan kode pembayaran Anda untuk melakukan cek pembayaran.
-                            </div>
-                            <div class="py-7 px-5 border border-border rounded-md mb-10">
-                                <div class="mb-5">
-                                    <div class="text-sm font-bold text-quaternary tracking-wider mb-3">
-                                        Kode Pembayaran
-                                    </div>
-                                    <input type="text" placeholder="Masukkan kata sandi Anda" class="w-full py-4 px-5 text-sm inline rounded-md focus:outline-none text-quaternary tracking-wider border-border border">
-                                </div>
-                                <input type="submit" value="Cari Pembayaran" class="w-full inline tracking-wider bg-secondary py-4 text-sm rounded-md text-white hover:bg-secondary-hover hover:duration-200 cursor-pointer mb-2">
-                            </div>
-
-                        </div>
-                        <div>
-                            <div class=" font-bold text-base text-quaternary tracking-wider mb-1">
-                                Instruksi Pembayaran
-                            </div>
-                            <div class=" text-sm text-quinary tracking-wider mb-5">
-                                Anda dapat melakukan transaksi dengan menggunakan bank yang tertera di bawah. Silaka
-                                lakukan transfer sesuai <b>Total yang harus dibayar</b>.
-                            </div>
-                            <div>
-                                <div class="mb-5">
-                                    <div>
-                                        <img src="assets/img/BNI.svg" alt="" class="float-left mr-5">
-                                    </div>
-                                    <div class="float-left">
-                                        <div class="text-sm font-bold text-quaternary tracking-wider">
-                                            Bank Negara Indonesia (BNI)
-                                        </div>
-                                        <div class="text-sm text-quinary tracking-wider">
-                                            No. Rekening : 123456789
-                                        </div>
-                                        <div class="text-sm text-quinary tracking-wider">
-                                            Wonderlust Indonesia
-                                        </div>
-                                    </div>
-                                    <div class="clear-both"></div>
-                                </div>
-                                <div class="mb-5">
-                                    <div>
-                                        <img src="assets/img/BRI.svg" alt="" class="float-left mr-5">
-                                    </div>
-                                    <div class="float-left">
-                                        <div class="text-sm font-bold text-quaternary tracking-wider">
-                                            Bank Rakyat Indonesia (BRI)
-                                        </div>
-                                        <div class="text-sm text-quinary tracking-wider">
-                                            No. Rekening : 123456789
-                                        </div>
-                                        <div class="text-sm text-quinary tracking-wider">
-                                            Wonderlust Indonesia
-                                        </div>
-                                    </div>
-                                    <div class="clear-both"></div>
-                                </div>
-                                <div class="">
-                                    <div>
-                                        <img src="assets/img/BCA.svg" alt="" class="float-left mr-5">
-                                    </div>
-                                    <div class="float-left">
-                                        <div class="text-sm font-bold text-quaternary tracking-wider">
-                                            Bank Central Asia (BCA)
-                                        </div>
-                                        <div class="text-sm text-quinary tracking-wider">
-                                            No. Rekening : 123456789
-                                        </div>
-                                        <div class="text-sm text-quinary tracking-wider">
-                                            Wonderlust Indonesia
-                                        </div>
-                                    </div>
-                                    <div class="clear-both"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
-    <!-- End Payment Check -->
 
     <!-- Footer -->
     <footer class="bg-quaternary py-10 text-sm text-center text-quinary">

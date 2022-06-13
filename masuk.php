@@ -3,6 +3,11 @@
 include "config/connect.php";
 
 session_start();
+
+if (isset($_SESSION['id_pengguna'])) {
+    header("location:dashboard.php");
+}
+
 if (isset($_POST['in'])) {
     $email = $_POST['email'];
     $password = md5($_POST['password']);
@@ -48,7 +53,7 @@ if (isset($_POST['in'])) {
         </div>
         <div class="py-20 px-10 md:px-20 xl:px-32 ">
             <div class="font-bold font-playfair-display text-quaternary text-lg text-center mb-14">
-                <a href="../src">
+                <a href="/wonderlust">
                     Wonderlust
                 </a>
             </div>

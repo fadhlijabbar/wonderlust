@@ -50,7 +50,7 @@ if (isset($_POST['in'])) {
         <div class="grid grid-cols-1">
             <div class="py-20 px-10">
                 <div class="font-bold font-playfair-display text-quaternary text-lg text-center mb-14">
-                    <a href="../src">
+                    <a href="/wonderlust">
                         Wonderlust
                     </a>
                 </div>

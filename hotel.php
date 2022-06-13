@@ -2,7 +2,11 @@
 
 include 'config/connect.php';
 
+session_start();
 $id_hotel = $_GET['id'];
+$getHotelName = mysqli_query($conn, "SELECT * FROM hotel WHERE id_hotel = '$id_hotel'");
+$row = mysqli_fetch_assoc($getHotelName);
+$hotelName = $row['nama_hotel'];
 
 ?>
 
@@ -12,6 +16,9 @@ $id_hotel = $_GET['id'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <?php echo $hotelName; ?>
+    </title>
     <link href="/Wonderlust/dist/output.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,7 +39,9 @@ $id_hotel = $_GET['id'];
             <!-- Logo Name -->
             <div class="flex float-left h-14">
                 <div class="font-playfair-display self-center text-base font-bold text-quaternary">
-                    Wonderlust
+                    <a href="/wonderlust">
+                        Wonderlust
+                    </a>
                 </div>
             </div>
             <!-- End Logo Name -->
@@ -45,18 +54,63 @@ $id_hotel = $_GET['id'];
             </div>
             <!-- End Bars Button -->
 
-            <!-- Menu -->
-            <div class="float-right h-14 hidden md:flex">
-                <div class="self-center text-sm text-quinary cursor-pointer">
-                    Fathoni Zikri Nugroho
-                    <i class="fa-solid fa-circle-user text-quaternary"></i>
+            <?php
+            if (isset($_SESSION['id_pengguna'])) {
+
+            ?>
+                <!-- Menu -->
+                <div class="float-right h-14 hidden md:flex">
+                    <div class="self-center text-sm text-quinary cursor-pointer">
+                        <a href="dashboard.php">
+                            <?php echo $_SESSION['nama']; ?>
+                            <i class="fa-solid fa-circle-user text-quaternary"></i>
+                        </a>
+                    </div>
+                    </a>
                 </div>
-            </div>
-            <!-- End Menu -->
+                <!-- End Menu -->
+            <?php
+            } else {
+            ?>
+                <!-- Menu -->
+                <div class="float-right h-14 hidden md:flex">
+                    <div class="self-center tracking-wider text-sm mx-5 text-quinary">
+                        <a href="masuk.php">
+                            Masuk
+                        </a>
+                    </div>
+                    <a href="daftar.php">
+                        <div class="self-center text-sm mx-5 tracking-wider bg-secondary py-4 px-6 rounded-lg text-white hover:bg-secondary-hover hover:duration-200">
+                            Daftar Sekarang
+                        </div>
+                    </a>
+                </div>
+                <!-- End Menu -->
+
+            <?php
+            }
+            ?>
 
         </div>
     </header>
     <!-- End Header -->
+
+    <!-- Secondary Menu -->
+    <div class="bg-primary-light-hover hidden" id="sec-menu">
+        <div class="py-6 px-6 text-sm tracking-wider text-quinary text-center">
+            <a href="">
+                Masuk
+            </a>
+        </div>
+        <div class="py-4 px-6 text-sm">
+            <a href="">
+                <button class="bg-secondary w-full tracking-wider hover:bg-secondary-hover py-4 px-6 rounded-lg text-white text-center">
+                    Daftar Sekarang
+                </button>
+            </a>
+        </div>
+    </div>
+    <!-- End Secondary Menu -->
 
     <!-- Hotel Detail Content -->
     <?php
@@ -117,8 +171,38 @@ $id_hotel = $_GET['id'];
                                 <div class="text-base font-bold text-quaternary tracking-wider">
                                     Fasilitas
                                 </div>
-                                <div>
-                                    Fasilitas
+                                <div class="text-quinary text-sm">
+                                    <?php
+                                    $getFasilitas = mysqli_query($conn, "SELECT * FROM fasilitas WHERE id_hotel = '$data[id_hotel]'");
+                                    $dataFasilitas = mysqli_fetch_array($getFasilitas);
+                                    if ($dataFasilitas['tempat_parkir'] == "1") {
+                                        echo "<li>Tempat Parkir</li>";
+                                    }
+                                    if ($dataFasilitas['restoran'] == "1") {
+                                        echo "<li>Restoran</li>";
+                                    }
+                                    if ($dataFasilitas['wifi_publik'] == "1") {
+                                        echo "<li>Wifi Publik</li>";
+                                    }
+                                    if ($dataFasilitas['coffee_shop'] == "1") {
+                                        echo "<li>Coffee Shop</li>";
+                                    }
+                                    if ($dataFasilitas['antar_jemput'] == "1") {
+                                        echo "<li>Antar-jemput Bandara</li>";
+                                    }
+                                    if ($dataFasilitas['shuttle_bus'] == "1") {
+                                        echo "<li>Shuttle Bus</li>";
+                                    }
+                                    if ($dataFasilitas['fitness'] == "1") {
+                                        echo "<li>Fitness</li>";
+                                    }
+                                    if ($dataFasilitas['kolam_renang'] == "1") {
+                                        echo "<li>Kolam Renang</li>";
+                                    }
+                                    if ($dataFasilitas['billiards'] == "1") {
+                                        echo "<li>Billiards</li>";
+                                    }
+                                    ?>
                                 </div>
                             </div>
                             <div>

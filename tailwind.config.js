@@ -9,6 +9,7 @@ module.exports = {
     'daftar.php',
     'search.php',
     'dashboard.php',
+    'invoice.php',
     'src/index.html',
     'src/masuk.html',
     'src/daftar.html',

@@ -4,17 +4,23 @@ include "../config/connect.php";
 
 if (isset($_POST['register'])) {
     if ($_POST['password'] == $_POST['repassword']) {
-        $nama = $_POST['nama'];
-        $email = $_POST['email'];
-        $password = md5($_POST['password']);
+        $checkEmail = mysqli_query($conn, "SELECT * FROM pengurus WHERE email = '$_POST[email]'");
+        if (mysqli_num_rows($checkEmail) == 0) {
+            $nama = $_POST['nama'];
+            $email = $_POST['email'];
+            $password = md5($_POST['password']);
 
-        $query = mysqli_query($conn, "INSERT INTO pengurus VALUES (null, '$nama', '$email', '$password','0')");
+            $query = mysqli_query($conn, "INSERT INTO pengurus VALUES (null, '$nama', '$email', '$password','0')");
 
-        if ($query) {
-            echo "<script>alert('Berhasil membuat akun!');</script>";
-            echo "<script>location='index.php';</script>";
+            if ($query) {
+                echo "<script>alert('Berhasil membuat akun!');</script>";
+                echo "<script>location='index.php';</script>";
+            } else {
+                echo "<script>alert('Gagal membuat akun!');</script>";
+                echo "<script>location='daftar.php';</script>";
+            }
         } else {
-            echo "<script>alert('Gagal membuat akun!');</script>";
+            echo "<script>alert('Email sudah terdaftar!');</script>";
             echo "<script>location='daftar.php';</script>";
         }
     } else {
@@ -49,7 +55,7 @@ if (isset($_POST['register'])) {
         <div class="grid grid-cols-1">
             <div class="py-20 px-10">
                 <div class="font-bold font-playfair-display text-quaternary text-lg text-center mb-14">
-                    <a href="../src">
+                    <a href="/wonderlust">
                         Wonderlust
                     </a>
                 </div>

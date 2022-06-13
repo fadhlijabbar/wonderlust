@@ -2,6 +2,11 @@
 
 include 'config/connect.php';
 
+session_start();
+if (!isset($_SESSION['id_pengguna'])) {
+    header("location:masuk.php");
+}
+
 ?>
 
 <!doctype html>
@@ -18,7 +23,7 @@ include 'config/connect.php';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/be579e605d.js" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 </head>
 
 <body class="font-poppins">
@@ -47,8 +52,8 @@ include 'config/connect.php';
 
             <!-- Menu -->
             <div class="float-right h-14 hidden md:flex">
-                <div class="self-center text-sm text-quinary cursor-pointer">
-                    Fathoni Zikri Nugroho
+                <div id="profile-name" class="self-center text-sm text-quinary cursor-pointer">
+                    <?php echo $_SESSION['nama']; ?>
                     <i class="fa-solid fa-circle-user text-quaternary"></i>
                 </div>
             </div>
@@ -57,6 +62,16 @@ include 'config/connect.php';
         </div>
     </header>
     <!-- End Header -->
+
+    <!-- Profile Menu -->
+    <a href="logout.php">
+        <div id="profile-menu" class="p-5 fixed top-30 hidden right-10 bg-white border border-border rounded-md">
+            <div class=" text-quaternary hover:text-primary">
+                Keluar
+            </div>
+        </div>
+    </a>
+    <!-- End Profile Menu -->
 
     <!-- Menu -->
     <div class="py-14">
@@ -68,48 +83,39 @@ include 'config/connect.php';
                             <div class="py-3 px-5 text-primary font-bold">
                                 Dashboard
                             </div>
-                            <div class="py-3 px-5 text-quaternary">
-                                Layanan
-                            </div>
-                            <div class="py-3 px-5 text-quaternary">
-                                Tagihan
-                            </div>
-                            <div class="py-3 px-5 text-quaternary">
-                                Riwayat
-                            </div>
                         </div>
                     </div>
                     <div class="col-span-3">
                         <div class="p-5 bg-blue-100 rounded-md text-blue-800 mb-5">
-                            Selamat Datang Fathoni
+                            Selamat Datang <?php echo $_SESSION['nama']; ?>
                         </div>
                         <div>
-                            <div class="grid grid-cols-3 gap-5">
-                                <a href="">
-                                    <div class="border border-border rounded-md p-10 text-center">
-                                        <i class="fa-solid fa-house-user text-xl mb-2 text-secondary"></i>
-                                        <div class="text-base text-quinary">
-                                            <b class="text-quaternary">12</b> layanan
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="">
-                                    <div class="border border-border rounded-md p-10 text-center">
-                                        <i class="fa-solid fa-receipt text-xl mb-2 text-secondary"></i>
-                                        <div class="text-base text-quinary">
-                                            <b class="text-quaternary">12</b> tagihan
-                                        </div>
-                                    </div>
-                                </a>
-                                <a href="">
-                                    <div class="border border-border rounded-md p-10 text-center">
-                                        <i class="fa-solid fa-calendar-days text-xl mb-2 text-secondary"></i>
-                                        <div class="text-base text-quinary">
-                                            <b class="text-quaternary">12</b> riwayat
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
+                            <table class="border border-border w-full">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Pesanan</th>
+                                    <th>Check In</th>
+                                    <th>Check Out</th>
+                                    <th>Status</th>
+                                </tr>
+                                <?php
+                                $id_pengguna = $_SESSION['id_pengguna'];
+                                $getTransaksi = mysqli_query($conn, "SELECT * FROM transaksi WHERE id_pengguna = '$id_pengguna'");
+                                $no = 1;
+                                while ($row = mysqli_fetch_array($getTransaksi)) {
+                                    $id_transaksi = $row['id_transaksi'];
+                                ?>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                <?php
+                                }
+                                ?>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -132,24 +138,9 @@ include 'config/connect.php';
 </body>
 
 <script>
-    <?php
-    $getRoom = mysqli_query($conn, "SELECT * FROM kamar WHERE id_hotel = '$data[id_hotel]' and tersedia>=1 ORDER BY id_kamar ASC");
-    $number = 1;
-    while ($dataRoom = mysqli_fetch_array($getRoom)) {
-    ?>
-        $("#roomList<?php echo $number; ?>").click(function() {
-            if ($("#roomList<?php echo $number; ?>").hasClass("border-secondary")) {
-                $("#roomList<?php echo $number; ?>").removeClass("border-secondary");
-                $("#id_kamar<?php echo $number; ?>").val(0);
-            } else {
-                $("#roomList<?php echo $number; ?>").toggleClass("border-secondary");
-                $("#id_kamar<?php echo $number; ?>").val(<?php echo $dataRoom['id_kamar'] ?>);
-            }
-        });
-    <?php
-        $number++;
-    }
-    ?>
+    $("#profile-name").click(function() {
+        $("#profile-menu").toggle("");
+    });
 </script>
 
 </html>

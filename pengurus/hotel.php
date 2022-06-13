@@ -4,6 +4,10 @@ include "../config/connect.php";
 
 session_start();
 
+if (!isset($_SESSION['email'])) {
+    echo "<script>window.location.href='index.php';</script>";
+}
+
 if (isset($_POST['addHotel'])) {
     $nama_hotel = $_POST['nama_hotel'];
     $deskripsi = $_POST['deskripsi'];
@@ -315,7 +319,7 @@ if (isset($_POST['updatePbyHotel'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Hotel</title>
     <link href="/Wonderlust/dist/output.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -337,7 +341,9 @@ if (isset($_POST['updatePbyHotel'])) {
             <!-- Logo Name -->
             <div class="flex float-left h-14">
                 <div class="font-playfair-display self-center text-base font-bold text-quaternary">
-                    Wonderlust
+                    <a href="dashboard.php">
+                        Wonderlust
+                    </a>
                 </div>
             </div>
             <!-- End Logo Name -->
@@ -352,7 +358,7 @@ if (isset($_POST['updatePbyHotel'])) {
 
             <!-- Menu -->
             <div class="float-right h-14 hidden md:flex">
-                <div class="self-center tracking-wider text-sm mx-5 text-quaternary">
+                <div id="profile-name" class="self-center cursor-pointer tracking-wider text-sm mx-5 text-quaternary">
                     <?php echo $_SESSION['nama']; ?>
                     <i class="fa-solid fa-circle-user"></i>
                 </div>
@@ -362,6 +368,16 @@ if (isset($_POST['updatePbyHotel'])) {
         </div>
     </header>
     <!-- End Header -->
+
+    <!-- Profile Menu -->
+    <a href="logout.php">
+        <div id="profile-menu" class="p-5 fixed top-30 hidden right-10 bg-white border border-border rounded-md">
+            <div class=" text-quaternary hover:text-primary">
+                Keluar
+            </div>
+        </div>
+    </a>
+    <!-- End Profile Menu -->
 
     <!-- Secondary Menu -->
     <div class="bg-primary-light-hover hidden">
@@ -1537,6 +1553,9 @@ if (isset($_POST['updatePbyHotel'])) {
         app.show();
         $(document).on("change", "#provinsi", app.tampil)
     })
+    $("#profile-name").click(function() {
+        $("#profile-menu").toggle("");
+    });
 </script>
 
 </html>

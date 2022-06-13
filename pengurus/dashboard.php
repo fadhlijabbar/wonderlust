@@ -62,7 +62,9 @@ if (isset($_GET['unpublikasi'])) {
             <!-- Logo Name -->
             <div class="flex float-left h-14">
                 <div class="font-playfair-display self-center text-base font-bold text-quaternary">
-                    Wonderlust
+                    <a href="">
+                        Wonderlust
+                    </a>
                 </div>
             </div>
             <!-- End Logo Name -->
@@ -77,7 +79,7 @@ if (isset($_GET['unpublikasi'])) {
 
             <!-- Menu -->
             <div class="float-right h-14 hidden md:flex">
-                <div class="self-center tracking-wider text-sm mx-5 text-quaternary">
+                <div id="profile-name" class="self-center cursor-pointer tracking-wider text-sm mx-5 text-quaternary">
                     <?php echo $_SESSION['nama']; ?>
                     <i class="fa-solid fa-circle-user"></i>
                 </div>
@@ -87,6 +89,16 @@ if (isset($_GET['unpublikasi'])) {
         </div>
     </header>
     <!-- End Header -->
+
+    <!-- Profile Menu -->
+    <a href="logout.php">
+        <div id="profile-menu" class="p-5 fixed top-30 hidden right-10 bg-white border border-border rounded-md">
+            <div class=" text-quaternary hover:text-primary">
+                Keluar
+            </div>
+        </div>
+    </a>
+    <!-- End Profile Menu -->
 
     <!-- Secondary Menu -->
     <div class="bg-primary-light-hover hidden">
@@ -109,6 +121,101 @@ if (isset($_GET['unpublikasi'])) {
 
         <!-- Dashboard Home -->
         <div class="container mx-auto px-6">
+            <div class="mb-8">
+                <div class="font-bold tracking-wider text-base text-quaternary mb-1">
+                    Pesanan Anda
+                </div>
+                <div class="text-sm tracking-wider text-quinary">
+                    Berikut merupakan pesanan hotel Anda.
+                </div>
+            </div>
+            <div class="mb-8">
+                <table class="w-full border border-border text-quaternary">
+                    <tr>
+                        <th class=" border border-border text-quaternary">No</th>
+                        <th class=" border border-border text-quaternary">Kode Pembayaran</th>
+                        <th class=" border border-border text-quaternary">Pesanan</th>
+                        <th class=" border border-border text-quaternary">Pemesan</th>
+                        <th class=" border border-border text-quaternary">Bukti Pembayaran</th>
+                        <th class=" border border-border text-quaternary">Status</th>
+                        <th class=" border border-border text-quaternary">Aksi</th>
+                    </tr>
+                    <?php
+                    $no = 0;
+                    $getHotel = mysqli_query($conn, "SELECT * FROM hotel WHERE id_pengurus='$_SESSION[id_pengurus]'");
+                    $dataHotel = mysqli_fetch_array($getHotel);
+                    $id_hotel = $dataHotel['id_hotel'];
+                    $getTransaksi = mysqli_query($conn, "SELECT * FROM transaksi WHERE id_hotel='$id_hotel'");
+                    while ($dataTransaksi = mysqli_fetch_array($getTransaksi)) {
+                        $no++;
+                    ?>
+                        <tr>
+                            <td class=" border border-border text-quinary text-center"><?php echo $no; ?></td>
+                            <td class=" border border-border text-quinary text-center">
+                                <?php
+                                $getPembayaran = mysqli_query($conn, "SELECT * FROM pembayaran WHERE id_transaksi='$dataTransaksi[id_transaksi]'");
+                                if (mysqli_num_rows($getPembayaran) > 0) {
+                                    $dataPembayaran = mysqli_fetch_array($getPembayaran);
+                                    echo $dataPembayaran['kode_pembayaran'];
+                                }
+                                ?>
+                            </td>
+                            <td class=" border border-border text-quinary text-center">
+                                <?php
+                                $getHotel = mysqli_query($conn, "SELECT * FROM hotel WHERE id_hotel='$dataTransaksi[id_hotel]'");
+                                $dataHotel = mysqli_fetch_array($getHotel);
+                                echo $dataHotel['nama_hotel'];
+                                ?>
+                            </td>
+                            <td class=" border border-border text-quinary text-center">
+                                <?php
+                                if ($dataTransaksi['id_pengguna'] == 0) {
+                                    $getTamu = mysqli_query($conn, "SELECT * FROM tamu WHERE id_tamu='$dataTransaksi[id_tamu]'");
+                                    $dataTamu = mysqli_fetch_array($getTamu);
+                                    echo $dataTamu['nama_tamu'];
+                                } else {
+                                    $getPengguna = mysqli_query($conn, "SELECT * FROM pengguna WHERE id_pengguna='$dataTransaksi[id_pengguna]'");
+                                    $dataPengguna = mysqli_fetch_array($getPengguna);
+                                    echo $dataPengguna['nama'];
+                                }
+                                ?>
+                            </td>
+                            <td class=" border border-border text-quinary text-center">
+                                <?php
+                                if ($dataPembayaran['bukti'] == "") {
+                                    echo "Belum Upload";
+                                } else {
+                                    echo "<img src='../data/bukti/$dataPembayaran[bukti]' width='200px' class='inline-block'>";
+                                }
+                                ?>
+                            </td>
+                            <td class=" border border-border text-quinary text-center">
+                                <?php
+                                echo $dataPembayaran['status'];
+                                ?>
+                            </td>
+                            <td class="p-5 border border-border text-quinary text-center">
+                                <?php
+                                if ($dataPembayaran['bukti'] !== "" and $dataPembayaran['status'] == "Menunggu Pembayaran") {
+                                ?>
+                                    <form action="konfirmasipembayaran.php" method="POST">
+                                        <input type="hidden" name="kode_pembayaran" value="<?php echo $dataPembayaran['kode_pembayaran'] ?>">
+                                        <button class="tracking-wider bg-secondary py-4 px-6 text-sm rounded-md text-white hover:bg-secondary-hover hover:duration-200 cursor-pointer">Konfirmasi</button>
+                                    </form>
+                                <?php
+                                } else {
+                                ?>
+                                    <button class="tracking-wider bg-slate-200 py-4 px-6 text-sm rounded-md text-white cursor-pointer">Konfirmasi</button>
+                                <?php
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                </table>
+            </div>
             <div class="mb-8">
                 <div class="font-bold tracking-wider text-base text-quaternary mb-1">
                     Hotel Anda
@@ -201,5 +308,11 @@ if (isset($_GET['unpublikasi'])) {
     <!-- End Footer -->
 
 </body>
+
+<script>
+    $("#profile-name").click(function() {
+        $("#profile-menu").toggle("");
+    });
+</script>
 
 </html>

@@ -32,7 +32,9 @@ include "config/connect.php";
             <!-- Logo Name -->
             <div class="flex float-left h-14">
                 <div class="font-playfair-display self-center text-base font-bold text-quaternary">
-                    Wonderlust
+                    <a href="/wonderlust">
+                        Wonderlust
+                    </a>
                 </div>
             </div>
             <!-- End Logo Name -->
@@ -91,7 +93,7 @@ include "config/connect.php";
         <!-- Dashboard Home -->
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-8 gap-5">
-                <div class="col-span-2">
+                <!-- <div class="col-span-2">
                     <div class="bg-white border border-border p-5 rounded-md">
                         <div class="text-sm text-quaternary font-bold tracking-wider mb-5">
                             Urutkan berdasarkan
@@ -123,8 +125,8 @@ include "config/connect.php";
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-span-6">
+                </div> -->
+                <div class="col-span-8">
                     <div class="mb-10">
                         <div class="float-left">
                             <div class="">
