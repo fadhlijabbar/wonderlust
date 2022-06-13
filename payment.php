@@ -38,6 +38,7 @@ if (isset($_POST['confirmPembayaran'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
     <link href="dist/output.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -239,58 +240,73 @@ if (isset($_POST['confirmPembayaran'])) {
                                     <div class="text-sm font-bold text-quinary tracking-wider">
                                         Status Pembayaran
                                     </div>
-                                    <div class="text-base font-bold text-secondary tracking-wider">
-                                        <?php echo $dataPembayaran['status'] ?>
-                                    </div>
+
+                                    <?php
+                                    if ($dataPembayaran['status'] == "Sudah Dibayar") {
+                                    ?>
+                                        <div class="text-base font-bold text-green-500 tracking-wider">Sudah Dibayar</div>
+                                    <?php
+                                    } else {
+                                    ?>
+                                        <div class="text-base font-bold text-secondary tracking-wider">Menunggu Pembayaran</div>
+                                    <?php
+                                    }
+                                    ?>
                                 </div>
                                 <a href="invoice.php?kode_pembayaran=<?php echo $dataPembayaran['kode_pembayaran'] ?>" target="__blank">
                                     <button class="tracking-wider bg-secondary py-4 px-6 text-sm rounded-md text-white hover:bg-secondary-hover hover:duration-200 cursor-pointer">Unduh
                                         Tagihan</button>
                                 </a>
                             </div>
-                            <div class=" font-bold text-base text-quaternary tracking-wider mb-1">
-                                Instruksi Pembayaran
-                            </div>
-                            <div class=" text-sm text-quinary tracking-wider mb-5">
-                                Anda dapat melakukan transaksi dengan menggunakan bank yang tertera di bawah. Silaka
-                                lakukan transfer sesuai <b>Total yang harus dibayar</b>.
-                            </div>
-                            <div>
-                                <?php
-                                $getPembayaranHotel = mysqli_query($conn, "SELECT * FROM pembayaranhotel WHERE id_hotel = '$dataHotel[id_hotel]'");
-                                while ($dataPembayaranHotel = mysqli_fetch_array($getPembayaranHotel)) {
-                                ?>
-                                    <div class="mb-5">
-                                        <div>
-                                            <?php
-                                            if ($dataPembayaranHotel['nama_bank'] == "BNI") {
-                                                echo "<img src='src/assets/img/bni.svg' class='float-left mr-5'>";
-                                            } elseif ($dataPembayaranHotel['nama_bank'] == "BRI") {
-                                                echo "<img src='src/assets/img/bri.svg' class='float-left mr-5'>";
-                                            } elseif ($dataPembayaranHotel['nama_bank'] == "BCA") {
-                                                echo "<img src='src/assets/img/bca.svg' class='float-left mr-5'>";
-                                            }
-                                            ?>
-                                        </div>
-                                        <div class="float-left">
-                                            <div class="text-sm font-bold text-quaternary tracking-wider">
+                            <?php
+                            if ($dataPembayaran['status'] == "Menunggu Pembayaran") {
+                            ?>
+                                <div class=" font-bold text-base text-quaternary tracking-wider mb-1">
+                                    Instruksi Pembayaran
+                                </div>
+                                <div class=" text-sm text-quinary tracking-wider mb-5">
+                                    Anda dapat melakukan transaksi dengan menggunakan bank yang tertera di bawah. Silaka
+                                    lakukan transfer sesuai <b>Total yang harus dibayar</b>.
+                                </div>
+                                <div>
+                                    <?php
+                                    $getPembayaranHotel = mysqli_query($conn, "SELECT * FROM pembayaranhotel WHERE id_hotel = '$dataHotel[id_hotel]'");
+                                    while ($dataPembayaranHotel = mysqli_fetch_array($getPembayaranHotel)) {
+                                    ?>
+                                        <div class="mb-5">
+                                            <div>
                                                 <?php
-                                                echo $dataPembayaranHotel['nama_bank'];
+                                                if ($dataPembayaranHotel['nama_bank'] == "BNI") {
+                                                    echo "<img src='src/assets/img/bni.svg' class='float-left mr-5'>";
+                                                } elseif ($dataPembayaranHotel['nama_bank'] == "BRI") {
+                                                    echo "<img src='src/assets/img/bri.svg' class='float-left mr-5'>";
+                                                } elseif ($dataPembayaranHotel['nama_bank'] == "BCA") {
+                                                    echo "<img src='src/assets/img/bca.svg' class='float-left mr-5'>";
+                                                }
                                                 ?>
                                             </div>
-                                            <div class="text-sm text-quinary tracking-wider">
-                                                No. Rekening : <?php echo $dataPembayaranHotel['no_rek']; ?>
+                                            <div class="float-left">
+                                                <div class="text-sm font-bold text-quaternary tracking-wider">
+                                                    <?php
+                                                    echo $dataPembayaranHotel['nama_bank'];
+                                                    ?>
+                                                </div>
+                                                <div class="text-sm text-quinary tracking-wider">
+                                                    No. Rekening : <?php echo $dataPembayaranHotel['no_rek']; ?>
+                                                </div>
+                                                <div class="text-sm text-quinary tracking-wider">
+                                                    <?php echo $dataPembayaranHotel['nama_pemilik']; ?>
+                                                </div>
                                             </div>
-                                            <div class="text-sm text-quinary tracking-wider">
-                                                <?php echo $dataPembayaranHotel['nama_pemilik']; ?>
-                                            </div>
+                                            <div class="clear-both"></div>
                                         </div>
-                                        <div class="clear-both"></div>
-                                    </div>
-                                <?php
-                                }
-                                ?>
-                            </div>
+                                    <?php
+                                    }
+                                    ?>
+                                </div>
+                            <?php
+                            }
+                            ?>
                         </div>
                         <div>
                             <?php

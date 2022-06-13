@@ -1,11 +1,15 @@
 <?php
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
 include "config/connect.php";
 
 session_start();
 
-if (isset($_SESSION['id_pengguna'])) {
-    if (isset($_POST['insert'])) {
+if (isset($_POST['insert'])) {
+    if (isset($_SESSION['id_pengguna'])) {
         $id_pengguna = $_SESSION['id_pengguna'];
         $nama_pengguna = $_SESSION['nama'];
         $email = $_SESSION['email'];
@@ -13,8 +17,6 @@ if (isset($_SESSION['id_pengguna'])) {
         $checkin = $_POST['checkin'];
         $checkout = $_POST['checkout'];
         $getTamu = mysqli_query($conn, "SELECT * FROM tamu WHERE email = '$email'");
-        $tamu = mysqli_fetch_assoc($getTamu);
-        $id_tamu = $tamu['id_tamu'];
         $addBooking = mysqli_query($conn, "INSERT INTO transaksi (id_hotel, checkin, checkout, id_pengguna, id_tamu) VALUES ('$id_hotel', '$checkin', '$checkout', '$id_pengguna', 0)");
         $getBooking = mysqli_query($conn, "SELECT * FROM transaksi WHERE id_tamu = '$id_tamu' ORDER BY id_transaksi DESC LIMIT 1");
         $transaksi = mysqli_fetch_assoc($getBooking);
@@ -33,12 +35,10 @@ if (isset($_SESSION['id_pengguna'])) {
         $status = "Menunggu Pembayaran";
         $addPembayaran = mysqli_query($conn, "INSERT INTO pembayaran (id_transaksi, total, kode_pembayaran, tanggal, kadaluarsa, bukti, status) VALUES ('$id_transaksi', '$total', '$kode_pembayaran', NOW(),'$kadaluarsa', '', '$status')");
         header("Location: payment.php?kode_pembayaran=$kode_pembayaran");
-    }
-} else {
-    if (isset($_POST['insert'])) {
-        $nama_tamu = $_POST['nama_pemesan'];
+    } else {
+        $nama = $_POST['nama_pemesan'];
         $email = $_POST['email_pemesan'];
-        $addGuest = mysqli_query($conn, "INSERT INTO tamu (nama_tamu, email) VALUES ('$nama_tamu', '$email')");
+        $addGuest = mysqli_query($conn, "INSERT INTO tamu (nama_tamu, email) VALUES ('$nama', '$email')");
         if ($addGuest) {
             $id_hotel = $_POST['id'];
             $checkin = $_POST['checkin'];
@@ -65,6 +65,40 @@ if (isset($_SESSION['id_pengguna'])) {
             $addPembayaran = mysqli_query($conn, "INSERT INTO pembayaran (id_transaksi, total, kode_pembayaran, tanggal, kadaluarsa, bukti, status) VALUES ('$id_transaksi', '$total', '$kode_pembayaran', NOW(),'$kadaluarsa', '', '$status')");
         }
         header("Location: payment.php?kode_pembayaran=$kode_pembayaran");
+    }
+
+    //Load Composer's autoloader
+    require getcwd() . '/vendor/autoload.php';
+
+    //Create an instance; passing `true` enables exceptions
+    $mail = new PHPMailer(true);
+
+    try {
+        //Server settings
+        $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
+        $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+        $mail->Username   = 'aryaputrahaidar@gmail.com';                     //SMTP username
+        $mail->Password   = 'ntgtebrwtzqxqoqr';                               //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+        $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+        //Recipients
+        $mail->setFrom('aryaputrahaidar@gmail.com', 'Mailer');
+        $mail->addAddress($email, $nama);     //Add a recipient
+
+        //Content
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = 'INVOICE';
+        // $mail->Body    = 'Unduh Invoice Anda<br><b>http://localhost/wonderlust/invoice.php?kode_pembayaran=' . $kode_pembayaran . '</b>';
+        $mail->Body    = '<b>' . $status . ' sebelum ' . $kadaluarsa . '</b><br>Total Bayar : ' . $total . '<br>Kode Pembayaran :' . $kode_pembayaran . '<br>Unduh Invoice Anda<br><b>http://localhost/wonderlust/invoice.php?kode_pembayaran=' . $kode_pembayaran . '</b>';
+        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+        $mail->send();
+        echo 'Message has been sent';
+    } catch (Exception $e) {
+        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
     }
 }
 

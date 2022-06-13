@@ -58,7 +58,9 @@ if (isset($_GET['kode_pembayaran'])) {
                     } else {
                         $getTamu = mysqli_query($conn, "SELECT * FROM tamu WHERE id_tamu = '$dataTransaksi[id_tamu]'");
                         $dataTamu = mysqli_fetch_array($getTamu);
-                        echo $dataTamu['nama_tamu'];
+                        echo "<b>ID Transaksi : " . $dataPembayaran['id_transaksi'] . "</b><br>";
+                        echo "Nama : " . $dataTamu['nama_tamu'] . "<br>";
+                        echo "Email : " . $dataTamu['email'];
                     }
                     ?>
                 </td>
@@ -161,6 +163,7 @@ if (isset($_GET['kode_pembayaran'])) {
             setTimeout(function() {
                 self.close();
             }, 2000);
+
         }
     </script>
 

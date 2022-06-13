@@ -16,6 +16,7 @@ if (!isset($_SESSION['id_pengguna'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/Wonderlust/dist/output.css" rel="stylesheet">
+    <title>Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
@@ -92,25 +93,74 @@ if (!isset($_SESSION['id_pengguna'])) {
                         <div>
                             <table class="border border-border w-full">
                                 <tr>
-                                    <th>No</th>
-                                    <th>Pesanan</th>
-                                    <th>Check In</th>
-                                    <th>Check Out</th>
-                                    <th>Status</th>
+                                    <th class="p-3 border border-border">No</th>
+                                    <th class="p-3 border border-border">Kode Pembayaran</th>
+                                    <th class="p-3 border border-border">Pesanan</th>
+                                    <th class="p-3 border border-border">Check In</th>
+                                    <th class="p-3 border border-border">Check Out</th>
+                                    <th class="p-3 border border-border">Status</th>
                                 </tr>
                                 <?php
                                 $id_pengguna = $_SESSION['id_pengguna'];
                                 $getTransaksi = mysqli_query($conn, "SELECT * FROM transaksi WHERE id_pengguna = '$id_pengguna'");
-                                $no = 1;
+                                $no = 0;
                                 while ($row = mysqli_fetch_array($getTransaksi)) {
+                                    $no++;
                                     $id_transaksi = $row['id_transaksi'];
                                 ?>
                                     <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td class="border border-border text-center text-quinary p-3"><?php echo $no; ?></td>
+                                        <td class="border border-border text-center text-quinary p-3">
+                                            <?php
+                                            $getKodePembayaran = mysqli_query($conn, "SELECT * FROM pembayaran WHERE id_transaksi=$id_transaksi");
+                                            $rowKodePembayaran = mysqli_fetch_array($getKodePembayaran);
+                                            echo $rowKodePembayaran['kode_pembayaran'];
+                                            ?>
+                                        </td>
+                                        <td class="border border-border text-center text-quinary p-3">
+                                            <?php
+                                            $getHotel = mysqli_query($conn, "SELECT * FROM hotel WHERE id_hotel = '$row[id_hotel]'");
+                                            $rowHotel = mysqli_fetch_array($getHotel);
+                                            echo $rowHotel['nama_hotel'];
+                                            ?>
+                                        </td>
+                                        <td class="border border-border text-center text-quinary p-3">
+                                            <?php
+                                            $hari = date('d', strtotime($row['checkin']));
+                                            $bulan = date('F', strtotime($row['checkin']));
+                                            $tahun = date('Y', strtotime($row['checkin']));
+                                            echo $hari . " " . $bulan . " " . $tahun ?>
+                                        </td>
+                                        <td class="border border-border text-center text-quinary p-3">
+                                            <?php
+                                            $hari = date('d', strtotime($row['checkout']));
+                                            $bulan = date('F', strtotime($row['checkout']));
+                                            $tahun = date('Y', strtotime($row['checkout']));
+                                            echo $hari . " " . $bulan . " " . $tahun ?>
+                                        </td>
+                                        <td class="border border-border text-center text-quinary p-3 font-bold">
+                                            <?php
+                                            $getPembayaran = mysqli_query($conn, "SELECT * FROM pembayaran WHERE id_transaksi = $id_transaksi");
+                                            $rowPembayaran = mysqli_fetch_array($getPembayaran);
+                                            $now = date('Y-m-d');
+                                            if ($rowPembayaran['status'] == 'Menunggu Pembayaran') {
+                                                if ($rowPembayaran['kadaluarsa'] < $now) {
+                                                    $updatePembayaran = mysqli_query($conn, "UPDATE pembayaran SET status = 'Kadaluarsa' WHERE id_transaksi = $id_transaksi");
+                                                    $getUpdatePembayaran = mysqli_query($conn, "SELECT * FROM pembayaran WHERE id_transaksi = $id_transaksi");
+                                                    $dataUpdate = mysqli_fetch_array($getUpdatePembayaran);
+                                                    echo "<p class='text-red-500'>" . $dataUpdate['status'] . "</p>";
+                                                } else {
+                                                    echo $rowPembayaran['status'] . "<br> (" . $rowPembayaran['kadaluarsa'] . ")";
+                                                }
+                                            } else {
+                                                if ($rowPembayaran['status'] == 'Kadaluarsa') {
+                                                    echo "<p class='text-red-500'>" . $rowPembayaran['status'] . "</p>";
+                                                } else {
+                                                    echo "<p class='text-green-500'>" . $rowPembayaran['status'] . "</p>";
+                                                }
+                                            }
+                                            ?>
+                                        </td>
                                     </tr>
                                 <?php
                                 }
